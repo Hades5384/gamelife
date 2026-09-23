@@ -10,9 +10,12 @@
 <body>
 
     <nav class="top-nav">
-        <div class="nav-left theme-selector">
-            <span class="version-badge">v3.3.0 (Modal UI Polish)</span>
-            <button class="btn-theme" onclick="openModal('bg-modal')" style="border-color: var(--primary-color); color: var(--primary-color);">🖼️ FONDO</button>
+        <div class="nav-left">
+            <span class="version-badge">v3.4.0 (Mobile Excellence)</span>
+        </div>
+        <div class="nav-right theme-selector">
+            <!-- Se agregó la clase btn-fondo para el Responsive Grid -->
+            <button class="btn-theme btn-fondo" onclick="openModal('bg-modal')" style="border-color: var(--primary-color); color: var(--primary-color);">🖼️ FONDO</button>
             <button class="btn-theme" onclick="setTheme('terminal')">Terminal</button>
             <button class="btn-theme" onclick="setTheme('synthwave')">Synthwave</button>
             <button class="btn-theme" onclick="setTheme('matrix')">Matrix</button>
@@ -22,7 +25,7 @@
         </div>
     </nav>
 
-    <!-- REPRODUCTOR DE MÚSICA ADAPTATIVO -->
+    <!-- REPRODUCTOR DE MÚSICA -->
     <div class="music-player" id="music-player">
         <div class="player-header">
             <span>>_ AUDIO_SYS</span>
@@ -244,7 +247,6 @@
             </div>
             <div class="edit-profile-box scroll-box">
                 
-                <!-- Hint Mejorado -->
                 <div class="format-hint">
                     > INFO: El fondo se guarda únicamente para el tema visual que tienes activo en este momento.
                 </div>
@@ -258,7 +260,6 @@
                     <input type="file" id="input-bg-file" accept="image/*,.gif" onchange="handleBgFileSelect(event)" style="display: none;">
                 </div>
                 
-                <!-- Botón de eliminar con estilo 'Danger Zone' -->
                 <button class="btn-delete-bg" onclick="clearBackground()">[x] ELIMINAR FONDO ACTUAL</button>
                 
             </div>

@@ -98,7 +98,6 @@ input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cur
 .pixel-select { background: var(--bg-color); border: 2px solid var(--border-color); color: var(--text-color); padding: 12px; font-size: 0.55rem; font-family: 'Press Start 2P', monospace; cursor: pointer; border-radius: 0; width: 100%; }
 .pixel-select:focus { border-color: var(--primary-color); outline: none; }
 
-
 /* ==== NAVBAR Y CABECERA ==== */
 .top-nav { 
     display: flex; align-items: center; flex-wrap: wrap; gap: 15px;
@@ -185,16 +184,7 @@ header p { font-size: 0.5rem; color: var(--text-dim); text-shadow: var(--text-sh
 .scroll-box::-webkit-scrollbar-track { background: var(--bg-color); border-left: 2px solid var(--border-color); }
 .scroll-box::-webkit-scrollbar-thumb { background: var(--primary-color); }
 
-/* Hint Mejorado para legibilidad en 8-bits */
-.format-hint { 
-    font-size: 0.55rem; 
-    color: var(--text-dim); 
-    background-color: rgba(0,0,0,0.3);
-    padding: 12px;
-    border-left: 3px solid var(--primary-color);
-    line-height: 1.6;
-    margin-bottom: 5px;
-}
+.format-hint { font-size: 0.55rem; color: var(--text-dim); background-color: rgba(0,0,0,0.3); padding: 12px; border-left: 3px solid var(--primary-color); line-height: 1.6; margin-bottom: 5px; }
 
 .edit-profile-box label { color: var(--text-color); font-size: 0.6rem; margin-top: 15px; }
 .edit-profile-box input, .edit-profile-box textarea, .edit-profile-box select { 
@@ -208,23 +198,12 @@ header p { font-size: 0.5rem; color: var(--text-dim); text-shadow: var(--text-sh
 .drop-zone { background: var(--bg-color); border: 2px dashed var(--border-color); padding: 30px 15px; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .drop-zone.dragover { border-color: var(--primary-color); background-color: rgba(255, 255, 255, 0.1); transform: scale(1.02); }
 .drop-zone:hover { border-color: var(--primary-color); filter: brightness(1.2); }
-
-/* Textos de Drop Zone escalados */
-.drop-zone-text {
-    font-size: 0.6rem;
-    color: var(--primary-color);
-    line-height: 1.6;
-}
+.drop-zone-text { font-size: 0.6rem; color: var(--primary-color); line-height: 1.6; }
 
 .btn-save-modal { margin-top: 10px; background-color: var(--primary-color); color: var(--bg-color); border: 2px solid var(--border-color); padding: 15px; width: 100%; font-size: 0.6rem; cursor: pointer; text-transform: uppercase; }
 .btn-save-modal:hover { background-color: var(--accent-color); transform: scale(1.02); }
 
-/* Botón Danger Zone para Eliminar Fondo */
-.btn-delete-bg {
-    background-color: rgba(239, 68, 68, 0.1); color: #EF4444; border: 2px dashed #EF4444;
-    padding: 15px; font-size: 0.55rem; cursor: pointer; text-transform: uppercase;
-    font-family: 'Press Start 2P', monospace; margin-top: 10px; transition: all 0.2s ease;
-}
+.btn-delete-bg { background-color: rgba(239, 68, 68, 0.1); color: #EF4444; border: 2px dashed #EF4444; padding: 15px; font-size: 0.55rem; cursor: pointer; text-transform: uppercase; font-family: 'Press Start 2P', monospace; margin-top: 10px; transition: all 0.2s ease; }
 .btn-delete-bg:hover { background-color: #EF4444; color: #fff; border-style: solid; transform: scale(1.02); }
 
 /* Estadísticas */
@@ -239,7 +218,7 @@ header p { font-size: 0.5rem; color: var(--text-dim); text-shadow: var(--text-sh
 .radar-stat-shape { fill: var(--primary-color); fill-opacity: 0.4; stroke: var(--accent-color); stroke-width: 2; transition: all 0.5s ease-out; filter: drop-shadow(0 0 5px var(--primary-color)); }
 .radar-label { fill: var(--text-color); font-size: 10px; font-family: 'Press Start 2P', monospace; }
 
-/* Misiones UI Limpia */
+/* Misiones UI */
 .mission-item { background-color: var(--bg-color); border: 2px solid var(--border-color); padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.5rem; }
 .mission-item:hover { transform: scale(1.02); border-color: var(--primary-color); box-shadow: 3px 3px 0px var(--shadow-glow); }
 .mission-info span { display: block; font-size: 0.4rem; color: var(--accent-color); margin-top: 8px; }
@@ -260,3 +239,51 @@ header p { font-size: 0.5rem; color: var(--text-dim); text-shadow: var(--text-sh
 .level-toast.show { top: 50px; }
 .level-toast h2 { color: var(--accent-color); font-size: 0.8rem; margin-bottom: 10px; text-shadow: 2px 2px 0px rgba(0,0,0,0.5); }
 .level-toast p { color: var(--text-color); font-size: 0.5rem; text-shadow: 1px 1px 0px rgba(0,0,0,0.5); }
+
+
+/* ==========================================
+   [NUEVO]: DISEÑO RESPONSIVO EXPONENCIAL (MÓVILES)
+   ========================================== */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    
+    .top-nav { flex-direction: column; align-items: stretch; gap: 15px; padding: 15px; margin-bottom: 15px; }
+    .nav-left { justify-content: center; text-align: center; }
+    
+    /* Grid de 3 columnas para los temas en celular */
+    .theme-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 100%; }
+    .btn-theme { padding: 10px 5px; font-size: 0.45rem; width: 100%; text-align: center; justify-content: center; }
+    .btn-fondo { grid-column: 1 / -1; } /* El botón fondo abarca todo el ancho superior */
+    
+    /* El reproductor deja de flotar y se adapta a la pantalla */
+    .music-player { position: relative; top: 0; right: 0; width: 100%; margin-bottom: 15px; padding: 15px; box-shadow: 2px 2px 0px var(--shadow-glow); }
+    
+    header { margin-bottom: 15px; }
+    header h1 { font-size: 0.85rem; line-height: 1.5; letter-spacing: 0; }
+    .retro-header-box { padding: 15px; }
+    .header-content { padding: 15px; }
+    
+    .dashboard { gap: 15px; padding-bottom: 15px; }
+    .sidebar, .main-content { gap: 15px; }
+    
+    .panel { padding: 15px; box-shadow: 2px 2px 0px var(--shadow-glow); }
+    .panel-title { font-size: 0.65rem; margin-bottom: 15px; }
+    .pixel-icon { width: 20px; height: 20px; }
+    
+    .avatar-box { width: 60px; height: 60px; }
+    .avatar-info h3 { font-size: 0.65rem; }
+    .bio-text { padding: 10px; font-size: 0.4rem; }
+    
+    .btn-gear { top: 10px; right: 10px; padding: 5px; }
+    .gear-icon { width: 20px; height: 20px; }
+    
+    [data-theme="rpg-retro"] .panel-missions { padding: 15px; border-top-width: 10px; border-bottom-width: 10px; }
+    
+    /* Misiones adaptables: los botones bajan para no aplastar el texto */
+    .mission-item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+    .mission-item > div:last-child { align-self: flex-end; width: 100%; display: flex; justify-content: flex-end; border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 5px; }
+    
+    .radar-placeholder { height: 200px; }
+    
+    .modal-content { padding: 20px 15px; margin: 10px; }
+}
