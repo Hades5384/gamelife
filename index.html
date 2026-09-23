@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark-minimal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>START . BUILD . ACHIEVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-left theme-selector">
+            <span class="version-badge">v3.3.0 (Modal UI Polish)</span>
+            <button class="btn-theme" onclick="openModal('bg-modal')" style="border-color: var(--primary-color); color: var(--primary-color);">🖼️ FONDO</button>
+            <button class="btn-theme" onclick="setTheme('terminal')">Terminal</button>
+            <button class="btn-theme" onclick="setTheme('synthwave')">Synthwave</button>
+            <button class="btn-theme" onclick="setTheme('matrix')">Matrix</button>
+            <button class="btn-theme" onclick="setTheme('light-minimal')">Light Min</button>
+            <button class="btn-theme" onclick="setTheme('dark-minimal')">Dark Min</button>
+            <button class="btn-theme" onclick="setTheme('rpg-retro')">RPG Retro</button>
+        </div>
+    </nav>
+
+    <!-- REPRODUCTOR DE MÚSICA ADAPTATIVO -->
+    <div class="music-player" id="music-player">
+        <div class="player-header">
+            <span>>_ AUDIO_SYS</span>
+        </div>
+        <div class="player-controls">
+            <button class="btn-pixel-icon" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Todo">🔊</button>
+            
+            <div class="player-screen">
+                <select id="bgm-select" class="pixel-select-mini" onchange="changeBGM()" title="Seleccionar Pista">
+                    <option value="1">▶ T1: Aldea</option>
+                    <option value="2">▶ T2: Taberna</option>
+                    <option value="3">▶ T3: Crunchy</option>
+                    <option value="0">⏸ Solo Efectos</option>
+                </select>
+            </div>
+        </div>
+        <div class="volume-control">
+            <span class="vol-icon">🔉</span>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3" oninput="updateVolume()" title="Volumen General">
+        </div>
+    </div>
+
+    <header>
+        <div class="ide-header-box">
+            <div class="window-header">
+                <div class="window-dot dot-red"></div>
+                <div class="window-dot dot-yellow"></div>
+                <div class="window-dot dot-green"></div>
+                <span class="window-title">main.js - StartBuildAchieve</span>
+            </div>
+            <div class="header-content">
+                <h1>[ START . BUILD . ACHIEVE ]</h1>
+                <p class="subtitle-el"></p>
+            </div>
+        </div>
+
+        <div class="retro-header-box">
+            <h1>[ START . BUILD . ACHIEVE ]</h1>
+            <p class="subtitle-el"></p>
+        </div>
+    </header>
+
+    <!-- DASHBOARD GRID -->
+    <div class="dashboard">
+        <!-- COLUMNA IZQUIERDA -->
+        <aside class="sidebar">
+            <div class="panel">
+                <div class="panel-title">
+                    <svg class="pixel-icon" viewBox="0 0 16 16">
+                        <rect x="6" y="2" width="4" height="4"/><rect x="5" y="6" width="6" height="2"/><rect x="3" y="9" width="10" height="2"/><rect x="2" y="11" width="12" height="4"/>
+                    </svg>
+                    <span class="title-avatar"></span>
+                </div>
+                
+                <button class="btn-gear" onclick="openModal('profile-modal')" title="Editar Perfil">
+                    <img src="assets/engranaje.webp" alt="Configuración" class="gear-icon">
+                </button>
+                
+                <div class="avatar-container">
+                    <div class="avatar-box" id="avatar-preview"></div>
+                    <div class="avatar-info">
+                        <h3 id="display-name">CREATOR</h3>
+                        <p>Héroe Activo</p>
+                    </div>
+                </div>
+                <div class="bio-text" id="display-bio">"Construyendo el cambio, forjando ideas..."</div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <svg class="pixel-icon" viewBox="0 0 16 16">
+                        <rect x="7" y="1" width="2" height="2"/><rect x="5" y="3" width="6" height="2"/><rect x="3" y="5" width="10" height="6"/><rect x="5" y="11" width="6" height="2"/><rect x="7" y="13" width="2" height="2"/>
+                    </svg>
+                    > MIS_ESTADÍSTICAS
+                </div>
+                
+                <button class="btn-gear" onclick="openModal('stats-modal')" title="Configurar Stats">
+                    <img src="assets/engranaje.webp" alt="Configuración" class="gear-icon">
+                </button>
+                
+                <div class="stat-group"><div class="stat-label"><span>Fuerza</span><span id="text-fuerza">Nv.1 | 0/100</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-fuerza"></div></div></div>
+                <div class="stat-group"><div class="stat-label"><span>Sabiduría</span><span id="text-sabiduria">Nv.1 | 0/100</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-sabiduria"></div></div></div>
+                <div class="stat-group"><div class="stat-label"><span>Creatividad</span><span id="text-creatividad">Nv.1 | 0/100</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-creatividad"></div></div></div>
+                <div class="stat-group"><div class="stat-label"><span>Carisma</span><span id="text-carisma">Nv.1 | 0/100</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-carisma"></div></div></div>
+            </div>
+        </aside>
+
+        <!-- COLUMNA DERECHA -->
+        <main class="main-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <svg class="pixel-icon" viewBox="0 0 16 16">
+                        <rect x="7" y="1" width="2" height="2"/><rect x="5" y="3" width="6" height="2"/><rect x="3" y="5" width="10" height="6"/><rect x="5" y="11" width="6" height="2"/><rect x="7" y="13" width="2" height="2"/>
+                    </svg>
+                    <span class="title-radar"></span>
+                </div>
+                <div class="radar-placeholder">
+                    <svg id="radar-svg" viewBox="0 0 300 200" width="100%" height="100%">
+                        <line x1="150" y1="20" x2="150" y2="180" class="radar-grid" />
+                        <line x1="70" y1="100" x2="230" y2="100" class="radar-grid" />
+                        <polygon points="150,20 230,100 150,180 70,100" class="radar-grid" fill="none" />
+                        <polygon points="150,60 190,100 150,140 110,100" class="radar-grid" fill="none" />
+                        <polygon id="radar-polygon" points="150,100 150,100 150,100 150,100" class="radar-stat-shape" />
+                        <text x="150" y="12" class="radar-label" text-anchor="middle">SAB</text>
+                        <text x="250" y="104" class="radar-label" text-anchor="middle">CRE</text>
+                        <text x="150" y="196" class="radar-label" text-anchor="middle">CAR</text>
+                        <text x="50" y="104" class="radar-label" text-anchor="middle">FUE</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="panel panel-missions">
+                <div class="panel-title">
+                    <svg class="pixel-icon" viewBox="0 0 16 16">
+                        <rect x="2" y="12" width="2" height="2"/><rect x="4" y="10" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="8" y="6" width="2" height="2"/><rect x="10" y="4" width="2" height="2"/><rect x="12" y="2" width="2" height="2"/><rect x="12" y="12" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="2" y="2" width="2" height="2"/>
+                    </svg>
+                    <span class="title-missions"></span>
+                </div>
+                <div id="missions-container"></div>
+                <button class="btn-save-modal" onclick="openModal('mission-modal')" style="margin-top: 15px; background-color: var(--panel-bg); color: var(--primary-color); border: 2px dashed var(--primary-color);">[+] NUEVA MISIÓN</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST GENÉRICO -->
+    <div id="generic-toast" class="level-toast">
+        <h2 id="toast-title">MENSAJE</h2>
+        <p id="toast-message">Texto aquí</p>
+    </div>
+
+    <!-- NOTIFICACIÓN DE SUBIDA DE NIVEL -->
+    <div id="level-up-toast" class="level-toast">
+        <h2>
+            <svg viewBox="0 0 16 16" width="18" height="18" shape-rendering="crispEdges" fill="currentColor" style="vertical-align: text-bottom; margin-right: 6px;">
+                <rect x="7" y="0" width="2" height="2"/><rect x="5" y="2" width="6" height="2"/><rect x="3" y="4" width="10" height="2"/><rect x="5" y="6" width="6" height="2"/><rect x="7" y="8" width="2" height="2"/>
+            </svg>
+            [ LEVEL UP ]
+        </h2>
+        <p id="level-up-message">Subiste a Nivel 2</p>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-title" style="margin-bottom: 20px;">> SISTEMA</div>
+            <p id="confirm-message" style="color: var(--text-color); font-size: 0.6rem; margin-bottom: 25px; line-height: 1.6;">¿Seguro que deseas proceder?</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="btn-pixel" onclick="confirmYes()" style="background-color: var(--primary-color); color: var(--bg-color);">SÍ, PROCEDER</button>
+                <button class="btn-pixel" onclick="closeModal('confirm-modal')" style="border-color: #EF4444; color: #EF4444;">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NUEVA MISIÓN -->
+    <div class="modal-overlay" id="mission-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> NUEVA_MISIÓN</div>
+                <button class="btn-pixel-close" onclick="closeModal('mission-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box">
+                <label>> Título de la tarea:</label>
+                <input type="text" id="new-mission-name" placeholder="Ej: Entrenar tren superior">
+                
+                <label>> Atributo que mejora:</label>
+                <select id="new-mission-stat" class="pixel-select">
+                    <option value="fuerza">Fuerza</option>
+                    <option value="sabiduria">Sabiduría</option>
+                    <option value="creatividad">Creatividad</option>
+                    <option value="carisma">Carisma</option>
+                </select>
+                
+                <label>> Nivel de Dificultad (XP Fija):</label>
+                <select id="new-mission-level" class="pixel-select">
+                    <option value="1">Nivel 1 (Fácil) - 10 XP</option>
+                    <option value="2" selected>Nivel 2 (Medio) - 20 XP</option>
+                    <option value="3">Nivel 3 (Difícil) - 35 XP</option>
+                    <option value="4">Nivel 4 (Épico) - 50 XP</option>
+                </select>
+                
+                <button class="btn-save-modal" onclick="saveNewMission()" style="margin-top: 20px;">Crear Misión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR PERFIL -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> EDITAR_PERFIL</div>
+                <button class="btn-pixel-close" onclick="closeModal('profile-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box scroll-box">
+                <label>> Cambiar Nombre:</label>
+                <input type="text" id="input-name" placeholder="Tu Nombre / Nick" oninput="updateProfileLive()">
+                
+                <label>> Descripción corta (Bio):</label>
+                <textarea id="input-bio" placeholder="Escribe tu objetivo..." oninput="updateProfileLive()"></textarea>
+
+                <label>> URL de Avatar:</label>
+                <input type="text" id="input-avatar" placeholder="https://..." oninput="updateProfileLive()">
+                
+                <label>> Archivo Local (O Ctrl+V):</label>
+                <div class="drop-zone" id="avatar-drop-zone" onclick="document.getElementById('input-file').click()">
+                    <div id="file-label" class="drop-zone-text">[+] Haz Clic, Arrastra o Pega tu Avatar aquí</div>
+                    <input type="file" id="input-file" accept="image/*,.gif" onchange="handleFileSelect(event)" style="display: none;">
+                </div>
+            </div>
+            <button class="btn-save-modal" onclick="closeModal('profile-modal')" style="margin-top: 20px; flex-shrink: 0;">Guardar y Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR FONDO -->
+    <div class="modal-overlay" id="bg-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> CONFIGURAR_FONDO</div>
+                <button class="btn-pixel-close" onclick="closeModal('bg-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box scroll-box">
+                
+                <!-- Hint Mejorado -->
+                <div class="format-hint">
+                    > INFO: El fondo se guarda únicamente para el tema visual que tienes activo en este momento.
+                </div>
+                
+                <label>> URL de fondo:</label>
+                <input type="text" id="input-bg-url" placeholder="https://..." oninput="updateBackgroundLive()">
+                
+                <label>> Archivo Local (O Ctrl+V):</label>
+                <div class="drop-zone" id="bg-drop-zone" onclick="document.getElementById('input-bg-file').click()">
+                    <div id="bg-file-label" class="drop-zone-text">[^] Haz Clic, Arrastra o Pega el Fondo aquí</div>
+                    <input type="file" id="input-bg-file" accept="image/*,.gif" onchange="handleBgFileSelect(event)" style="display: none;">
+                </div>
+                
+                <!-- Botón de eliminar con estilo 'Danger Zone' -->
+                <button class="btn-delete-bg" onclick="clearBackground()">[x] ELIMINAR FONDO ACTUAL</button>
+                
+            </div>
+            <button class="btn-save-modal" onclick="closeModal('bg-modal')" style="margin-top: 20px; flex-shrink: 0;">Guardar y Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL: RESETEAR STATS -->
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> CONFIGURACIÓN_STATS</div>
+                <button class="btn-pixel-close" onclick="closeModal('stats-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box" style="text-align: center;">
+                <p style="color: var(--text-color); font-size: 0.6rem; line-height: 1.6; margin-bottom: 20px;">¿Deseas reiniciar todas tus estadísticas a cero?<br><br>Volverás al Nivel 1 y perderás tu progreso actual.</p>
+                <button class="btn-save-modal" style="background-color: #EF4444; color: #fff; border-color: #7f1d1d;" onclick="resetStats()">RESET DE STATS A CERO</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
