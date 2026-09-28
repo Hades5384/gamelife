@@ -617,15 +617,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('input-name').value = savedName;
     document.getElementById('input-bio').value = savedBio;
-    document.getElementById('display-name').textContent = savedName;
-    document.getElementById('display-bio').textContent = savedBio;
     
-    updateProfileLive(); 
     if (savedAvatar) {
-        if (savedAvatar.startsWith('http')) document.getElementById('input-avatar').value = savedAvatar;
         currentAvatarData = savedAvatar;
-        document.getElementById('avatar-preview').innerHTML = `<img src="${savedAvatar}" alt="Avatar">`;
+        if (savedAvatar.startsWith('http')) {
+            document.getElementById('input-avatar').value = savedAvatar;
+        }
     }
+    
+    updateProfileLive();
 
     renderMissions();
     renderStats();
