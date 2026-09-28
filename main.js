@@ -57,7 +57,9 @@ function toggleSound() {
 function updateSoundButtonUI() {
     const btn = document.getElementById('btn-sound');
     if (!btn) return;
-    btn.textContent = isSoundEnabled ? '🔊' : '🔇';
+    const iconOn = `<svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor"><rect x="1" y="6" width="3" height="4"/><rect x="4" y="5" width="1" height="6"/><rect x="5" y="4" width="1" height="8"/><rect x="6" y="3" width="2" height="10"/><rect x="10" y="5" width="1" height="6"/><rect x="12" y="3" width="1" height="10"/></svg>`;
+    const iconOff = `<svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor"><rect x="1" y="6" width="3" height="4"/><rect x="4" y="5" width="1" height="6"/><rect x="5" y="4" width="1" height="8"/><rect x="6" y="3" width="2" height="10"/><rect x="10" y="6" width="1" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="13" y="6" width="1" height="1"/><rect x="12" y="7" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></svg>`;
+    btn.innerHTML = isSoundEnabled ? iconOn : iconOff;
     btn.style.color = isSoundEnabled ? 'var(--primary-color)' : '#EF4444';
     btn.style.borderColor = isSoundEnabled ? 'var(--primary-color)' : '#EF4444';
 }

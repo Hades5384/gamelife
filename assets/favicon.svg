@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <!-- 1. Borde Oscuro (Silueta) -->
+  <rect x="3" y="2" width="3" height="1" fill="#1a1423"/>
+  <rect x="10" y="2" width="3" height="1" fill="#1a1423"/>
+  <rect x="2" y="3" width="12" height="1" fill="#1a1423"/>
+  <rect x="1" y="4" width="14" height="4" fill="#1a1423"/>
+  <rect x="2" y="8" width="12" height="1" fill="#1a1423"/>
+  <rect x="3" y="9" width="10" height="1" fill="#1a1423"/>
+  <rect x="4" y="10" width="8" height="1" fill="#1a1423"/>
+  <rect x="5" y="11" width="6" height="1" fill="#1a1423"/>
+  <rect x="6" y="12" width="4" height="1" fill="#1a1423"/>
+  <rect x="7" y="13" width="2" height="1" fill="#1a1423"/>
+
+  <!-- 2. Relleno del Corazón (Rojo) -->
+  <rect x="4" y="3" width="2" height="1" fill="#e74c3c"/>
+  <rect x="10" y="3" width="2" height="1" fill="#e74c3c"/>
+  <rect x="3" y="4" width="10" height="1" fill="#e74c3c"/>
+  <rect x="2" y="5" width="12" height="2" fill="#e74c3c"/>
+  <rect x="3" y="7" width="10" height="1" fill="#e74c3c"/>
+  <rect x="4" y="8" width="8" height="1" fill="#e74c3c"/>
+  <rect x="5" y="9" width="6" height="1" fill="#e74c3c"/>
+  <rect x="6" y="10" width="4" height="1" fill="#e74c3c"/>
+
+  <!-- 3. Brillo Retro (Rosa claro) -->
+  <rect x="4" y="4" width="2" height="1" fill="#ff9ff3"/>
+  <rect x="3" y="5" width="1" height="1" fill="#ff9ff3"/>
+
+  <!-- 4. Flecha Dorada de "Level Up" en el centro -->
+  <rect x="7" y="5" width="2" height="1" fill="#f1c40f"/>
+  <rect x="6" y="6" width="4" height="1" fill="#f1c40f"/>
+  <rect x="5" y="7" width="6" height="1" fill="#f1c40f"/>
+  <rect x="7" y="8" width="2" height="2" fill="#f1c40f"/>
+</svg>

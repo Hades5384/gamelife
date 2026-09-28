@@ -685,8 +685,8 @@ header p {
 }
 
 .gear-icon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     image-rendering: pixelated;
     transition: transform 0.2s ease;
 }
@@ -1249,8 +1249,8 @@ header p {
     }
 
     .gear-icon {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
 
     [data-theme="rpg-retro"] .panel-missions {
