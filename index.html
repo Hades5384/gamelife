@@ -13,38 +13,61 @@
         <div class="nav-left">
             <span class="version-badge">v3.4.0 (Mobile Excellence)</span>
         </div>
-        <div class="nav-right theme-selector">
-            <!-- Se agregó la clase btn-fondo para el Responsive Grid -->
-            <button class="btn-theme btn-fondo" onclick="openModal('bg-modal')" style="border-color: var(--primary-color); color: var(--primary-color);">🖼️ FONDO</button>
-            <button class="btn-theme" onclick="setTheme('terminal')">Terminal</button>
-            <button class="btn-theme" onclick="setTheme('synthwave')">Synthwave</button>
-            <button class="btn-theme" onclick="setTheme('matrix')">Matrix</button>
-            <button class="btn-theme" onclick="setTheme('light-minimal')">Light Min</button>
-            <button class="btn-theme" onclick="setTheme('dark-minimal')">Dark Min</button>
-            <button class="btn-theme" onclick="setTheme('rpg-retro')">RPG Retro</button>
+        <div class="nav-right">
+            <!-- Botón unificado para Temas y Fondo -->
+            <button class="btn-theme-trigger" onclick="openModal('theme-modal')" title="Configurar Apariencia">
+                🎨 TEMAS & FONDO
+            </button>
         </div>
     </nav>
 
-    <!-- REPRODUCTOR DE MÚSICA -->
-    <div class="music-player" id="music-player">
-        <div class="player-header">
-            <span>>_ AUDIO_SYS</span>
-        </div>
-        <div class="player-controls">
-            <button class="btn-pixel-icon" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Todo">🔊</button>
-            
-            <div class="player-screen">
-                <select id="bgm-select" class="pixel-select-mini" onchange="changeBGM()" title="Seleccionar Pista">
-                    <option value="1">▶ T1: Aldea</option>
-                    <option value="2">▶ T2: Taberna</option>
-                    <option value="3">▶ T3: Crunchy</option>
-                    <option value="0">⏸ Solo Efectos</option>
-                </select>
+    <!-- REPRODUCTOR DE MÚSICA RETRO-SPOTIFY COMPACTO -->
+    <div class="music-widget" id="music-widget">
+        <!-- Botón compacto en reposo con Icono Pixel Art SVG -->
+        <button class="music-badge" id="music-badge" title="Reproductor de Audio (Pasa el cursor o haz clic)">
+            <svg class="pixel-disc-icon" viewBox="0 0 16 16">
+                <rect x="5" y="1" width="6" height="1"/>
+                <rect x="3" y="2" width="10" height="1"/>
+                <rect x="2" y="3" width="12" height="2"/>
+                <rect x="1" y="5" width="14" height="6"/>
+                <rect x="2" y="11" width="12" height="2"/>
+                <rect x="3" y="13" width="10" height="1"/>
+                <rect x="5" y="14" width="6" height="1"/>
+                <rect x="7" y="6" width="2" height="4" fill="var(--bg-color)"/>
+                <rect x="6" y="7" width="4" height="2" fill="var(--bg-color)"/>
+            </svg>
+            <span class="music-badge-label">AUDIO</span>
+        </button>
+
+        <!-- Cuadro desplegado tipo Spotify Pixel Art -->
+        <div class="music-card">
+            <div class="spotify-header">
+                <div class="spotify-title">> NOW_PLAYING</div>
+                <div class="pixel-equalizer">
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                </div>
             </div>
-        </div>
-        <div class="volume-control">
-            <span class="vol-icon">🔉</span>
-            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3" oninput="updateVolume()" title="Volumen General">
+            
+            <div class="spotify-body">
+                <div class="player-controls">
+                    <button class="btn-pixel-icon" id="btn-sound" onclick="toggleSound()" title="Silenciar / Activar">🔊</button>
+                    <div class="player-screen">
+                        <select id="bgm-select" class="pixel-select-mini" onchange="changeBGM()" title="Seleccionar Pista">
+                            <option value="1">▶ T1: Aldea</option>
+                            <option value="2">▶ T2: Taberna</option>
+                            <option value="3">▶ T3: Crunchy</option>
+                            <option value="0">⏸ Solo Efectos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="volume-control">
+                    <span class="vol-icon">🔉</span>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3" oninput="updateVolume()" title="Volumen General">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -264,6 +287,33 @@
                 
             </div>
             <button class="btn-save-modal" onclick="closeModal('bg-modal')" style="margin-top: 20px; flex-shrink: 0;">Guardar y Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIGURAR TEMAS Y APARIENCIA -->
+    <div class="modal-overlay" id="theme-modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header-flex">
+                <div class="modal-title">> APARIENCIA_Y_TEMAS</div>
+                <button class="btn-pixel-close" onclick="closeModal('theme-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box">
+                <label>> Selecciona un tema visual:</label>
+                <div class="theme-grid-modal">
+                    <button class="btn-theme" onclick="setTheme('terminal')">Terminal</button>
+                    <button class="btn-theme" onclick="setTheme('synthwave')">Synthwave</button>
+                    <button class="btn-theme" onclick="setTheme('matrix')">Matrix</button>
+                    <button class="btn-theme" onclick="setTheme('light-minimal')">Light Min</button>
+                    <button class="btn-theme" onclick="setTheme('dark-minimal')">Dark Min</button>
+                    <button class="btn-theme" onclick="setTheme('rpg-retro')">RPG Retro</button>
+                </div>
+
+                <label style="margin-top: 20px;">> Fondo Personalizado:</label>
+                <button class="btn-pixel" onclick="closeModal('theme-modal'); openModal('bg-modal');" style="width: 100%; border-color: var(--primary-color); color: var(--primary-color); padding: 12px; margin-top: 5px;">
+                    🖼️ CONFIGURAR FONDO DEL TEMA
+                </button>
+            </div>
+            <button class="btn-save-modal" onclick="closeModal('theme-modal')" style="margin-top: 20px;">LISTO</button>
         </div>
     </div>
 

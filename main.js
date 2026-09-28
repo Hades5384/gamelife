@@ -627,4 +627,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
     renderMissions();
     renderStats();
+
+    // Toggle para abrir/cerrar reproductor en móviles al tocar el botón
+    const musicBadge = document.getElementById('music-badge');
+    const musicWidget = document.getElementById('music-widget');
+    if (musicBadge && musicWidget) {
+        musicBadge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            musicWidget.classList.toggle('is-open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!musicWidget.contains(e.target)) {
+                musicWidget.classList.remove('is-open');
+            }
+        });
+    }
 });
