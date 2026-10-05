@@ -17,6 +17,7 @@
     --title-avatar: "ESTADO_DEL_AVATAR";
     --title-radar: "RADAR_DE_ATRIBUTOS";
     --title-missions: "MISIONES_DIARIAS";
+    --title-stats: "MIS_ESTADISTICAS";
     --subtitle-text: "// Make your life a game.";
 }
 
@@ -35,6 +36,7 @@
     --title-avatar: "PLAYER STATS";
     --title-radar: "RADAR SKILLS";
     --title-missions: "ACTIVE QUESTS";
+    --title-stats: "STATS MATRIX";
     --subtitle-text: "Make your life a game.";
 }
 
@@ -53,6 +55,7 @@
     --title-avatar: "[SYSTEM_STATUS]";
     --title-radar: "[RADAR_GRID]";
     --title-missions: "[PENDING_TASKS]";
+    --title-stats: "[SYS_STATS]";
     --subtitle-text: "Make your life a game.";
 }
 
@@ -71,6 +74,7 @@
     --title-avatar: "Estado del Avatar";
     --title-radar: "Radar de Atributos";
     --title-missions: "Misiones Diarias";
+    --title-stats: "Mis Estadísticas";
     --subtitle-text: "Make your life a game.";
 }
 
@@ -89,6 +93,7 @@
     --title-avatar: "Estado del Avatar";
     --title-radar: "Radar de Atributos";
     --title-missions: "Misiones Diarias";
+    --title-stats: "Mis Estadísticas";
     --subtitle-text: "Make your life a game.";
 }
 
@@ -107,6 +112,7 @@
     --title-avatar: "PERFIL DEL HÉROE";
     --title-radar: "MAPA DE ATRIBUTOS";
     --title-missions: "TABLÓN DE MISIONES";
+    --title-stats: "MIS ESTADÍSTICAS";
     --subtitle-text: "Tu aventura acaba de comenzar...";
 }
 
@@ -125,8 +131,8 @@ body {
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: var(--text-color);
-    padding: 20px;
-    line-height: 1.6;
+    padding: 30px;
+    line-height: 1.8;
 }
 
 /* ==== REPRODUCTOR SPOTIFY PIXEL ART RETRÁCTIL ==== */
@@ -381,19 +387,21 @@ input[type=range]::-moz-range-track {
 
 .pixel-select {
     background: var(--bg-color);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     color: var(--text-color);
-    padding: 12px;
-    font-size: 0.55rem;
+    padding: 18px;
+    font-size: 0.75rem;
     font-family: 'Press Start 2P', monospace;
     cursor: pointer;
     border-radius: 0;
     width: 100%;
+    transition: all 0.2s ease;
 }
 
 .pixel-select:focus {
     border-color: var(--primary-color);
     outline: none;
+    box-shadow: 0 0 15px var(--shadow-glow);
 }
 
 /* ==== NAVBAR Y CABECERA ==== */
@@ -410,6 +418,13 @@ input[type=range]::-moz-range-track {
     padding: 15px 25px;
     border: 2px solid var(--border-color);
     box-shadow: 4px 4px 0px var(--shadow-glow);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .version-badge {
@@ -534,14 +549,18 @@ header p {
     text-shadow: var(--text-shadow-val);
 }
 
+.subtitle-el::before {
+    content: var(--subtitle-text);
+}
+
 /* ==== DASHBOARD GRID ==== */
 .dashboard {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 40px;
     max-width: 1100px;
     margin: 0 auto;
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
 
 @media (min-width: 900px) {
@@ -556,14 +575,14 @@ header p {
 .main-content {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 40px;
 }
 
 /* Panel Base */
 .panel {
     background-color: var(--panel-bg);
     border: 2px solid var(--border-color);
-    padding: 25px;
+    padding: 35px;
     box-shadow: 4px 4px 0px var(--shadow-glow);
     position: relative;
     backdrop-filter: blur(5px);
@@ -654,14 +673,14 @@ header p {
 .panel-title {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
+    gap: 12px;
+    font-size: 0.85rem;
     color: var(--primary-color);
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     border-bottom: 2px dashed var(--border-color);
     padding-bottom: 15px;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
-    line-height: 1.4;
+    line-height: 1.6;
 }
 
 .pixel-icon {
@@ -678,6 +697,10 @@ header p {
 
 .title-radar::before {
     content: var(--title-radar);
+}
+
+.title-stats::before {
+    content: var(--title-stats);
 }
 
 .title-missions::before {
@@ -865,12 +888,21 @@ header p {
 .edit-profile-box textarea,
 .edit-profile-box select {
     background: var(--bg-color);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     color: var(--text-color);
-    padding: 15px;
-    font-size: 0.6rem;
-    font-family: monospace;
+    padding: 18px;
+    font-size: 0.75rem;
+    font-family: 'Press Start 2P', monospace;
     width: 100%;
+    transition: all 0.2s ease;
+}
+
+.edit-profile-box input:focus,
+.edit-profile-box textarea:focus,
+.edit-profile-box select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 15px var(--shadow-glow);
 }
 
 .edit-profile-box input::placeholder,
@@ -914,13 +946,13 @@ header p {
 }
 
 .btn-save-modal {
-    margin-top: 10px;
+    margin-top: 20px;
     background-color: var(--primary-color);
     color: var(--bg-color);
-    border: 2px solid var(--border-color);
-    padding: 15px;
+    border: 3px solid var(--border-color);
+    padding: 18px;
     width: 100%;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     cursor: pointer;
     text-transform: uppercase;
 }
@@ -1016,12 +1048,12 @@ header p {
 .mission-item {
     background-color: var(--bg-color);
     border: 2px solid var(--border-color);
-    padding: 15px;
-    margin-bottom: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.5rem;
+    font-size: 0.65rem;
 }
 
 .mission-item:hover {
@@ -1065,8 +1097,8 @@ header p {
     background-color: var(--panel-bg);
     color: var(--text-color);
     border: 2px solid var(--primary-color);
-    padding: 12px 15px;
-    font-size: 0.45rem;
+    padding: 15px 20px;
+    font-size: 0.55rem;
     cursor: pointer;
     text-transform: uppercase;
 }
@@ -1147,16 +1179,24 @@ header p {
     }
 
     .top-nav {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 15px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 15px;
         margin-bottom: 15px;
     }
 
     .nav-left {
-        text-align: left;
+        text-align: center;
+    }
+
+    .nav-right {
+        justify-content: center;
+    }
+
+    .nav-right .btn-nav, .nav-right .btn-theme-trigger {
+        flex: 1 1 100%;
+        text-align: center;
     }
 
     .version-badge {
@@ -1165,8 +1205,8 @@ header p {
     }
 
     .btn-theme-trigger {
-        padding: 8px 10px;
-        font-size: 0.45rem;
+        padding: 12px 10px;
+        font-size: 0.55rem;
     }
 
     /* El reproductor flotante se ajusta a la pantalla del móvil */
@@ -1284,5 +1324,26 @@ header p {
     .modal-content {
         padding: 20px 15px;
         margin: 10px;
+    }
+
+    /* Ajustes de entradas y botones para móvil */
+    .edit-profile-box input,
+    .edit-profile-box textarea,
+    .edit-profile-box select,
+    .pixel-select {
+        padding: 12px;
+        font-size: 0.55rem;
+        border-width: 2px;
+    }
+    
+    .btn-save-modal {
+        padding: 12px;
+        font-size: 0.6rem;
+        border-width: 2px;
+    }
+
+    .btn-pixel {
+        padding: 12px 15px;
+        font-size: 0.45rem;
     }
 }

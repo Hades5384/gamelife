@@ -7,6 +7,7 @@
     <title>gamelife.dev | Tu vida en un juego</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/systems.css">
     <link rel="shortcut icon" href="assets/favicon.svg" type="image/x-icon">
 </head>
 
@@ -14,10 +15,13 @@
 
     <nav class="top-nav">
         <div class="nav-left">
-            <span class="version-badge">v2.0.1 (BETA)</span>
+            <span class="version-badge">v3.0.0 (BETA)</span>
         </div>
         <div class="nav-right">
-            <!-- Botón unificado para Temas y Fondo -->
+            <!-- Botones de Navegación -->
+            <button class="btn-nav" onclick="openModal('save-modal')" title="Save State">[ SAVE ]</button>
+            <button class="btn-nav" onclick="BaseUI.open()" title="Constructor de Legado">[ MI BASE ]</button>
+            <button class="btn-nav" onclick="ChronicleUI.open()" title="Crónicas del Héroe">[ LOGROS ]</button>
             <button class="btn-theme-trigger" onclick="openModal('theme-modal')" title="Configurar Apariencia">
                 <svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor"
                     style="vertical-align: middle; margin-right: 6px;">
@@ -116,13 +120,13 @@
             </div>
             <div class="header-content">
                 <h1>gamelife.dev | Tu vida en un juego</h1>
-                <p class="subtitle-el">[ Empieza . Construye . Logra ]</p>
+                <p class="subtitle-el"></p>
             </div>
         </div>
 
         <div class="retro-header-box">
             <h1>gamelife.dev | Tu vida en un juego</h1>
-            <p class="subtitle-el">[ Empieza . Construye . Logra ]</p>
+            <p class="subtitle-el"></p>
         </div>
     </header>
 
@@ -155,12 +159,33 @@
 
                 <div class="avatar-container">
                     <div class="avatar-box" id="avatar-preview"></div>
-                    <div class="avatar-info">
-                        <h3 id="display-name">CREATOR</h3>
-                        <p>Héroe Activo</p>
+                    <div class="avatar-info" style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+                        <h3 id="display-name" style="margin:0;">CREATOR</h3>
+                        <p class="equipped-title" id="hud-equipped-title" style="margin:0;">Héroe Activo</p>
+                        <p id="hud-level-text" style="font-size: 0.55rem; color: var(--primary-color); margin:0;">Nv. 1</p>
                     </div>
                 </div>
-                <div class="bio-text" id="display-bio">"Construyendo el cambio, forjando ideas..."</div>
+                
+                <div class="hud-bars">
+                    <div class="hud-bar-container">
+                        <div class="hud-hp-fill" id="hud-hp-fill" style="width: 100%;"></div>
+                        <span class="hud-text" id="hud-hp-text">HP: 100/100</span>
+                    </div>
+                    <div class="hud-bar-container">
+                        <div class="hud-xp-fill" id="hud-xp-fill" style="width: 0%;"></div>
+                        <span class="hud-text" id="hud-xp-text">XP: 0/100</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div class="hud-streak" style="margin-top: 0;">
+                            <span id="hud-streak-text" class="streak-flame" title="Días de racha">🔥 0</span>
+                            <span id="hud-shield-text" style="margin-left: 10px;" title="Escudos protectores">🛡️ 0/2</span>
+                            <span id="hud-gold-text" style="margin-left: 10px; color: var(--tier-gold, #ffd700);" title="Oro disponible">🪙 0</span>
+                        </div>
+                        <button class="btn-pixel" style="padding: 10px; font-size: 0.45rem;" onclick="openModal('rest-modal')">DESCANSAR</button>
+                    </div>
+                </div>
+                
+                <div class="bio-text" id="display-bio" style="margin-top: 25px;">"Construyendo el cambio, forjando ideas..."</div>
             </div>
 
             <div class="panel">
@@ -172,7 +197,7 @@
                         <rect x="5" y="11" width="6" height="2" />
                         <rect x="7" y="13" width="2" height="2" />
                     </svg>
-                    MIS_ESTADÍSTICAS
+                    <span class="title-stats"></span>
                 </div>
 
                 <button class="btn-gear" onclick="openModal('stats-modal')" title="Configurar Stats">
@@ -452,7 +477,146 @@
         </div>
     </div>
 
-    <script src="main.js"></script>
+    <!-- MODAL: GESTIÓN DE PARTIDA (SAVE) -->
+    <div class="modal-overlay" id="save-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> GESTIÓN_DE_PARTIDA</div>
+                <button class="btn-pixel-close" onclick="closeModal('save-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box">
+                <button class="btn-pixel" style="width:100%; margin-bottom:10px; border-color: var(--primary-color);" onclick="SaveSystem.createSavePoint()">
+                    Crear Punto de Guardado (Ctrl+S)
+                </button>
+                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="SaveSystem.restoreSavePoint()">
+                    Restaurar Punto de Guardado
+                </button>
+                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="SaveSystem.exportData()">
+                    Exportar (.json)
+                </button>
+                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="document.getElementById('import-file').click()">
+                    Importar (.json)
+                </button>
+                <input type="file" id="import-file" accept=".json" onchange="SaveSystem.importData(event)" style="display:none;">
+                <button class="btn-pixel" style="width:100%; margin-bottom:10px; border-color: #e74c3c; color: #e74c3c;" onclick="SaveSystem.newGame()">
+                    Nueva Partida
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONSTRUCTOR DE BASE -->
+    <div class="modal-overlay" id="base-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header-flex">
+                <div class="modal-title">> MI_LEGADO</div>
+                <button class="btn-pixel-close" onclick="closeModal('base-modal')" title="Cerrar">X</button>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 0.55rem; color: var(--text-dim); margin-bottom: 20px;">Invierte tu oro en construir un monumento a tu constancia. No es consumismo, es construcción.</div>
+                
+                <div id="base-icon-display" style="font-size: 4rem; margin-bottom: 10px; text-shadow: 2px 2px 0 #000;">🔥</div>
+                <div id="base-name-display" style="font-size: 1rem; color: var(--primary-color); margin-bottom: 5px;">Fogata Solitaria</div>
+                <div id="base-desc-display" style="font-size: 0.55rem; color: var(--text-color); margin-bottom: 25px; line-height: 1.4;">Apenas un fuego para calentarte. El inicio de tu viaje.</div>
+                
+                <div id="base-action-container">
+                    <!-- Action injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CRÓNICAS DEL HÉROE -->
+    <div class="modal-overlay" id="chronicle-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header-flex">
+                <div class="modal-title">> CRÓNICAS_DEL_HÉROE</div>
+                <button class="btn-pixel-close" onclick="closeModal('chronicle-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="chronicle-tabs" style="display:flex; gap:5px; margin-bottom:15px; border-bottom: 2px dashed var(--border-color); padding-bottom:10px; overflow-x: auto;">
+                <button class="btn-pixel btn-tab" id="btn-tab-medals" onclick="ChronicleUI.switchTab('medals')">Medallas</button>
+                <button class="btn-pixel btn-tab" id="btn-tab-titles" onclick="ChronicleUI.switchTab('titles')">Títulos</button>
+                <button class="btn-pixel btn-tab" id="btn-tab-history" onclick="ChronicleUI.switchTab('history')">Crónica</button>
+            </div>
+            <div class="edit-profile-box scroll-box" style="height: 300px; overflow-y: auto;">
+                <div id="tab-medals-content" class="chronicle-tab"></div>
+                <div id="tab-titles-content" class="chronicle-tab" style="display:none;"></div>
+                <div id="tab-history-content" class="chronicle-tab" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: REPORTE -->
+    <div class="modal-overlay" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> REPORTE_DE_REGRESO</div>
+                <button class="btn-pixel-close" onclick="closeModal('report-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box" style="text-align: left;">
+                <p id="report-details" style="font-size: 0.6rem; line-height: 1.6;"></p>
+                <button class="btn-save-modal" onclick="closeModal('report-modal')" style="margin-top: 20px;">ENTENDIDO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GAME OVER -->
+    <div class="modal-overlay" id="gameover-modal">
+        <div class="modal-content" style="border-color: var(--hp-color); box-shadow: 10px 10px 0px var(--hp-color);">
+            <div class="modal-header-flex">
+                <div class="modal-title" style="color: var(--hp-color);">> GAME_OVER</div>
+            </div>
+            <div class="edit-profile-box" style="text-align: center;">
+                <h1 style="color: var(--hp-color); font-size: 1.5rem; margin-bottom: 20px;">HAS CAÍDO</h1>
+                <p style="font-size: 0.6rem; line-height: 1.6; color: var(--text-color);">
+                    Tu HP llegó a 0.<br><br>
+                    Pierdes 1 Nivel de Héroe.<br>
+                    Tus atributos están intactos.<br><br>
+                    Levántate de nuevo.
+                </p>
+                <button class="btn-save-modal" onclick="closeModal('gameover-modal')" style="margin-top: 20px; background-color: var(--hp-color); border-color: var(--hp-low);">CONTINUAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DESCANSO -->
+    <div class="modal-overlay" id="rest-modal">
+        <div class="modal-content">
+            <div class="modal-header-flex">
+                <div class="modal-title">> MODO_DESCANSO</div>
+                <button class="btn-pixel-close" onclick="closeModal('rest-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box">
+                <p style="font-size: 0.55rem; line-height: 1.5; margin-bottom: 15px;">Programa un día de descanso para congelar HP y racha. Máx 3 por mes.</p>
+                <input type="date" id="rest-date-input" class="pixel-select" style="margin-bottom: 15px;">
+                <button class="btn-save-modal" onclick="Rest.scheduleRest(document.getElementById('rest-date-input').value); closeModal('rest-modal');">PROGRAMAR DESCANSO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- v3 Scripts -->
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/bus.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/ui/toasts.js"></script>
+    <script src="js/ui/modals.js"></script>
+    <script src="js/systems/profile.js"></script>
+    <script src="js/systems/missions.js"></script>
+    <script src="js/systems/rest.js"></script>
+    <script src="js/systems/day-engine.js"></script>
+    <script src="js/systems/hero.js"></script>
+    <script src="js/systems/streak.js"></script>
+    <script src="js/systems/achievements.js"></script>
+    <script src="js/systems/titles.js"></script>
+    <script src="js/systems/history.js"></script>
+    <script src="js/systems/save.js"></script>
+    <script src="js/systems/economy.js"></script>
+    <script src="js/systems/base.js"></script>
+    <script src="js/ui/hud.js"></script>
+    <script src="js/ui/chronicle.js"></script>
+    <script src="js/main-v3.js"></script>
 </body>
 
 </html>
