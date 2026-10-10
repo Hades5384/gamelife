@@ -68,16 +68,6 @@ const Hero = {
         
         EventBus.emit('hero:death');
         EventBus.emit('state:updated');
-        
-        // Trigger visual
-        document.body.classList.add('shake');
-        document.body.classList.add('flash-red');
-        playErrorSound();
-        setTimeout(() => {
-            document.body.classList.remove('shake');
-            document.body.classList.remove('flash-red');
-            openModal('gameover-modal');
-        }, 500);
     },
 
     addXp(amount) {

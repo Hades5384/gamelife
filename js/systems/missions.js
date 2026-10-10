@@ -35,8 +35,11 @@ function renderStats() {
         let percent = Math.min((stat.current / stat.max) * 100, 100);
         const bar = document.getElementById(`bar-${key}`);
         const text = document.getElementById(`text-${key}`);
-        if(bar) bar.style.width = percent + '%';
-        if(text) text.textContent = `Nv.${stat.level} | ${stat.current}/${stat.max}`;
+        if(bar) {
+            bar.style.width = percent + '%';
+            bar.title = `${stat.current}/${stat.max} XP`;
+        }
+        if(text) text.textContent = `Lvl ${stat.level}`;
     }
     updateRadar();
 }
@@ -55,13 +58,16 @@ function renderMissions() {
         const missionEl = document.createElement('div');
         missionEl.className = `mission-item ${isCompleted ? 'mission-completed' : ''}`;
         missionEl.innerHTML = `
-            <div class="mission-info">
-                ${mission.name}
-                <span>+${xpAmount} XP ${statNames[mission.stat]} (Nv. ${mission.level})</span>
+            <div class="mission-info" style="display:flex; flex-direction:column; gap:8px;">
+                <span style="font-family: 'Pixelify Sans', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-color);">${mission.name}</span>
+                <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                    <span style="background:var(--primary-color); color:var(--bg-color); padding:3px 6px; font-size:0.45rem; font-family:'Press Start 2P', monospace;">+${xpAmount} XP ${statNames[mission.stat].toUpperCase()}</span>
+                    <span style="background:var(--tier-gold, #ffd700); color:#000; padding:3px 6px; font-size:0.45rem; font-family:'Press Start 2P', monospace;">+10 <i class="icon-pixel icon-gold" style="width:10px;height:10px;"></i></span>
+                </div>
             </div>
-            <div>
-                <button class="btn-pixel" onclick="completarMision(${mission.id})" ${isCompleted ? 'disabled' : ''}>
-                    ${isCompleted ? 'HECHO' : 'Completar'}
+            <div class="mission-actions" style="display:flex; gap:8px; align-items:center;">
+                <button class="btn-pixel" onclick="completarMision(${mission.id}, event)" ${isCompleted ? 'disabled' : ''}>
+                    ${isCompleted ? 'HECHO' : 'COMPLETAR'}
                 </button>
                 <button class="btn-delete-mission" onclick="deleteMission(${mission.id})" title="Eliminar Misión">X</button>
             </div>
@@ -76,14 +82,14 @@ function renderMissions() {
             undoBtn.title = 'Deshacer';
             undoBtn.innerHTML = '↺';
             undoBtn.onclick = () => deshacerMision(mission.id);
-            missionEl.querySelector('div:last-child').appendChild(undoBtn);
+            missionEl.querySelector('.mission-actions').appendChild(undoBtn);
         }
         
         container.appendChild(missionEl);
     });
 }
 
-function completarMision(missionId) {
+function completarMision(missionId, event = null) {
     const mission = StateManager.data.missions.find(m => m.id === missionId);
     if (!mission) return;
 
@@ -118,6 +124,9 @@ function completarMision(missionId) {
         goldReward *= 2;
     }
     
+    // Guardamos la recompensa exacta para poder revocarla sin explotar el RNG
+    mission.lastGoldReward = goldReward;
+    
     if (typeof Economy !== 'undefined') Economy.addGold(goldReward);
     
     if (isCrit) {
@@ -128,6 +137,16 @@ function completarMision(missionId) {
 
     // Emit for hero/streak/achievements
     EventBus.emit('mission:completed', { missionId, xpGained, stat: mission.stat, level: mission.level });
+    
+    if (window.FX && event) {
+        FX.spawnFromEvent(event, `+${xpGained} XP`, "var(--primary-color)");
+        if (goldRecompensa > 0) {
+            setTimeout(() => {
+                FX.spawnFromEvent(event, `+${goldRecompensa} ORO`, "var(--tier-gold, #ffd700)");
+            }, 250);
+        }
+    }
+    
     EventBus.emit('state:updated');
     
     renderStats(); renderMissions();
@@ -145,15 +164,23 @@ function deshacerMision(missionId) {
     
     stat.current -= xpGained;
     if (stat.current < 0) {
-        // En caso raro de que haya bajado de nivel (muy dificil calcular max previo con exactitud sin log, pero aproximamos)
+        // Recalcular max de forma determinista desde el nivel anterior
         stat.level = Math.max(1, stat.level - 1);
-        stat.max = Math.floor(stat.max / 1.5);
+        let newMax = 100;
+        for (let i = 1; i < stat.level; i++) {
+            newMax = Math.floor(newMax * 1.5);
+        }
+        stat.max = newMax;
         stat.current = stat.max + stat.current; // current es negativo aquí
+        if (stat.current < 0) stat.current = 0;
     }
 
     mission.lastCompleted = null;
     
-    if (typeof Economy !== 'undefined') Economy.addGold(-10); // Refund base gold
+    // Revocar exactamente el oro dado para evitar exploits
+    const goldToRevoke = mission.lastGoldReward || 10;
+    if (typeof Economy !== 'undefined') Economy.addGold(-goldToRevoke); 
+    mission.lastGoldReward = 0;
     
     EventBus.emit('mission:undone', { missionId, xpGained, stat: mission.stat, level: mission.level });
     EventBus.emit('state:updated');
@@ -237,3 +264,4 @@ function updateRadar() {
     const polygon = document.getElementById('radar-polygon');
     if(polygon) polygon.setAttribute('points', `${cx},${cy - (s * maxRadius)} ${cx + (c * maxRadius)},${cy} ${cx},${cy + (a * maxRadius)} ${cx - (f * maxRadius)},${cy}`);
 }
+

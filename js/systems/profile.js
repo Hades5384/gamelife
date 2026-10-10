@@ -46,13 +46,15 @@ function updateProfileLive() {
     if(dispBio) dispBio.textContent = bio;
 
     const avatarBox = document.getElementById('avatar-preview');
-    const defaultAvatarSVG = `<svg viewBox="0 0 16 16" style="width:50px; height:50px; fill:var(--primary-color); shape-rendering: crispEdges;"><rect x="5" y="2" width="6" height="6"/><rect x="3" y="9" width="10" height="7"/></svg>`;
+    const defaultAvatarSVG = `<svg viewBox="0 0 16 16" style="width:100%; height:100%; fill:var(--primary-color); shape-rendering: crispEdges; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color); background: var(--panel-bg);">
+        <path d="M5 1h6v2h2v2h1v6h-1v2H9v-2H7v2H3v-2H2V5h1V3h2V1zm1 4v2H4v2h2V7h4v2h2V7h-2V5H6z"/>
+    </svg>`;
 
     if (avatarBox) {
         if (currentAvatarData) {
-            avatarBox.innerHTML = `<img src="${currentAvatarData}" alt="Avatar">`;
+            avatarBox.innerHTML = `<img src="${currentAvatarData}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; image-rendering:pixelated; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color);">`;
         } else if (avatarUrl) {
-            avatarBox.innerHTML = `<img src="${avatarUrl}" alt="Avatar" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultAvatarSVG}';">`;
+            avatarBox.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; image-rendering:pixelated; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color);" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultAvatarSVG}';">`;
             currentAvatarData = avatarUrl;
         } else {
             avatarBox.innerHTML = defaultAvatarSVG;

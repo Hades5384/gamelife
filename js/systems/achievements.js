@@ -24,25 +24,33 @@ const Achievements = {
         { id: 'secret_immortal', name: 'Inmortal', desc: 'Alcanza el nivel 20 sin morir', tier: 'legendary', secret: true, title: 'Inmortal', check: (s) => s.hero.level >= 20 && s.hero.deaths === 0 }
     ],
 
+    _evaluating: false,
+
     init() {
-        EventBus.on('state:updated', this.evaluate.bind(this));
+        // Suscribimos a eventos específicos en vez de state:updated
+        // para evitar cascadas de re-evaluación infinitas
         EventBus.on('mission:completed', this.onMissionCompleted.bind(this));
         EventBus.on('streak:increased', this.onPerfectDay.bind(this));
+        EventBus.on('hero:levelup', () => this.evaluate());
+        EventBus.on('hero:death', () => this.evaluate());
+        EventBus.on('streak:broken', () => this.evaluate());
     },
 
     onMissionCompleted(data) {
         StateManager.data.counters.missionsTotal++;
         if (!StateManager.data.counters.perStat[data.stat]) StateManager.data.counters.perStat[data.stat] = 0;
         StateManager.data.counters.perStat[data.stat]++;
+        this.evaluate();
     },
 
     onPerfectDay() {
         StateManager.data.counters.perfectDays++;
+        this.evaluate();
     },
 
     evaluate() {
-        if (!StateManager.data) return;
-        
+        if (!StateManager.data || this._evaluating) return;
+        this._evaluating = true;
         this.catalog.forEach(ach => {
             if (!StateManager.data.achievements[ach.id]) {
                 if (ach.check(StateManager.data)) {
@@ -57,6 +65,7 @@ const Achievements = {
                 }
             }
         });
+        this._evaluating = false;
     },
 
     showAchievementToast(ach) {

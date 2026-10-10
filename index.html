@@ -1,48 +1,234 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-theme="dark-minimal">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>gamelife.dev | Tu vida en un juego</title>
+    <!-- Fuentes Pixel Art -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/systems.css">
     <link rel="shortcut icon" href="assets/favicon.svg" type="image/x-icon">
+    <style>
+        /* ==============================================================
+           HOTFIX V4: ARMONÍA, RESPIRACIÓN (SPACING) Y CORRECCIÓN DE FUENTES
+           ============================================================== */
+        
+        /* 1. Prevenir que el navegador destroce las fuentes de píxeles aplicando 'fake bold' */
+        h1, h2, h3, h4, h5, h6, 
+        .btn-menu, .btn-pixel, .btn-nav, 
+        .font-bold, #display-name, .hud-text,
+        .stat-label span:last-child {
+            font-weight: normal !important;
+        }
+
+        /* 2. Top Navigation Bar (Header) - Alineación y Espaciado Premium */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 40px; /* Respiración */
+            background: var(--panel-bg);
+            border-bottom: 4px solid var(--border-color);
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .header-center {
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        /* 3. Textos del Héroe (Header Izquierdo) */
+        #display-name {
+            font-size: 1.2rem; /* Tamaño coherente en 8-bits */
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+
+        .level-badge {
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-badge span#hud-level-text {
+            font-family: 'Press Start 2P', monospace;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+        }
+
+        /* 4. Barra de Salud Central */
+        .hp-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px; /* Separar texto de la barra */
+        }
+
+        .hp-label {
+            font-size: 1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hud-bar-container {
+            width: 320px; /* Barra ancha e imponente */
+            height: 18px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-color);
+        }
+
+        /* 5. Economía (Header Derecho) */
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* 6. Dashboard Grid - Separación general (Armonía) */
+        .dashboard {
+            padding: 40px !important; /* Más espacio a los lados de la pantalla */
+            gap: 40px !important;     /* Más espacio entre las 3 columnas */
+        }
+
+        /* 7. Columnas Laterales (Sidebars) */
+        .sidebar {
+            padding: 30px !important; /* Respiración interior en los paneles */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Separación entre botones */
+        }
+
+        .btn-menu {
+            padding: 18px 20px !important; /* Botones más altos y cómodos */
+            border-radius: 4px;
+            font-size: 0.85rem !important;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px; /* Separar el título del contenido */
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--border-color);
+            letter-spacing: 1px;
+            color: var(--text-color);
+        }
+
+        .stat-group {
+            margin-bottom: 25px; /* Espaciado entre atributos */
+        }
+
+        .stat-label {
+            margin-bottom: 12px;
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label .sprite-icon {
+            margin-right: 10px;
+        }
+
+        /* 8. Responsividad (Móvil) */
+        @media (max-width: 950px) {
+            .top-nav {
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+                gap: 25px;
+            }
+            .header-section {
+                flex-direction: column;
+                width: 100%;
+                justify-content: center;
+            }
+            .header-right {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .dashboard {
+                padding: 15px !important;
+                gap: 20px !important;
+            }
+            .hud-bar-container { width: 100%; max-width: 320px; }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Efecto CRT Retro -->
+    <div class="crt-overlay"></div>
 
-    <nav class="top-nav">
-        <div class="nav-left">
-            <span class="version-badge">v3.0.0 (BETA)</span>
+    <!-- HEADER PREMIUM (Top Nav) -->
+    <header class="top-nav">
+        
+        <!-- Izquierda: Identidad -->
+        <div class="header-section">
+            <div style="text-align: left;">
+                <h3 id="display-name">CREATOR</h3>
+                <div class="level-badge">
+                    <span id="hud-equipped-title">Héroe Activo</span> | Nivel <span id="hud-level-text">1</span>
+                </div>
+            </div>
         </div>
-        <div class="nav-right">
-            <!-- Botones de Navegación -->
-            <button class="btn-nav" onclick="openModal('save-modal')" title="Save State">[ SAVE ]</button>
-            <button class="btn-nav" onclick="BaseUI.open()" title="Constructor de Legado">[ MI BASE ]</button>
-            <button class="btn-nav" onclick="ChronicleUI.open()" title="Crónicas del Héroe">[ LOGROS ]</button>
-            <button class="btn-theme-trigger" onclick="openModal('theme-modal')" title="Configurar Apariencia">
-                <svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor"
-                    style="vertical-align: middle; margin-right: 6px;">
-                    <rect x="3" y="3" width="10" height="10" />
-                    <rect x="2" y="4" width="1" height="8" />
-                    <rect x="13" y="4" width="1" height="8" />
-                    <rect x="4" y="2" width="8" height="1" />
-                    <rect x="4" y="13" width="8" height="1" />
-                    <rect x="5" y="5" width="2" height="2" fill="var(--bg-color)" />
-                    <rect x="9" y="5" width="2" height="2" fill="var(--bg-color)" />
-                    <rect x="5" y="9" width="2" height="2" fill="var(--bg-color)" />
-                </svg>
-                TEMAS & FONDO
+        
+        <!-- Centro: Vida -->
+        <div class="header-section header-center">
+            <div class="hp-container">
+                <div class="hp-label">Salud / HP <span id="hud-hp-text"></span></div>
+                <div class="hud-bar-container">
+                    <div class="hud-hp-fill" id="hud-hp-fill" style="width: 100%; height: 100%; background: var(--hp-color);"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Derecha: Economía y Controles -->
+        <div class="header-section header-right">
+            <span class="currency-item" style="color: var(--tier-gold, #ffd700);" title="Oro">
+                <img src="assets/coin.png" class="sprite-icon small"> <span id="hud-gold-text">0</span>
+            </span>
+            <span class="currency-item" style="color: #00FFFF;" title="Racha">
+                <img src="assets/streak.png" class="sprite-icon small"> <span id="hud-streak-text">0</span>
+            </span>
+            <span class="currency-item" style="color: #A3BE8C;" title="Escudos">
+                <i class="icon-pixel icon-shield" style="margin-right: 8px;"></i> <span id="hud-shield-text">0/2</span>
+            </span>
+            
+            <button class="btn-pixel currency-item" onclick="openModal('theme-modal')" title="Configurar Apariencia" style="padding: 12px 15px;">
+                <img src="assets/settings.png" class="sprite-icon small" style="margin:0;"> TEMAS
+            </button>
+            <button class="btn-nav currency-item" onclick="openModal('save-modal')" style="color: var(--tier-gold, #ffd700); border-color: var(--tier-gold, #ffd700); padding: 12px 15px;" title="Guardar">
+                <img src="assets/save.png" class="sprite-icon small" style="margin:0;"> SAVE
             </button>
         </div>
-    </nav>
+    </header>
 
-    <!-- REPRODUCTOR DE MÚSICA RETRO-SPOTIFY COMPACTO -->
+    <!-- REPRODUCTOR DE MÚSICA -->
     <div class="music-widget" id="music-widget">
-        <!-- Botón compacto en reposo con Icono Pixel Art SVG -->
-        <button class="music-badge" id="music-badge" title="Reproductor de Audio (Pasa el cursor o haz clic)">
+        <button class="music-badge" id="music-badge" title="Reproductor de Audio">
             <svg class="pixel-disc-icon" viewBox="0 0 16 16">
                 <rect x="5" y="1" width="6" height="1" />
                 <rect x="3" y="2" width="10" height="1" />
@@ -56,23 +242,14 @@
             </svg>
             <span class="music-badge-label">AUDIO</span>
         </button>
-
-        <!-- Cuadro desplegado tipo Spotify Pixel Art -->
         <div class="music-card">
             <div class="spotify-header">
                 <div class="spotify-title">> NOW_PLAYING</div>
-                <div class="pixel-equalizer">
-                    <span class="eq-bar"></span>
-                    <span class="eq-bar"></span>
-                    <span class="eq-bar"></span>
-                </div>
             </div>
-
             <div class="spotify-body">
                 <div class="player-controls">
-                    <button class="btn-pixel-icon" id="btn-sound" onclick="toggleSound()" title="Silenciar / Activar">
-                        <svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges"
-                            fill="currentColor">
+                    <button class="btn-pixel-icon" id="btn-sound" onclick="toggleSound()">
+                        <svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor">
                             <rect x="1" y="6" width="3" height="4" />
                             <rect x="4" y="5" width="1" height="6" />
                             <rect x="5" y="4" width="1" height="8" />
@@ -82,8 +259,7 @@
                         </svg>
                     </button>
                     <div class="player-screen">
-                        <select id="bgm-select" class="pixel-select-mini" onchange="changeBGM()"
-                            title="Seleccionar Pista">
+                        <select id="bgm-select" class="pixel-select-mini" onchange="changeBGM()">
                             <option value="1">[&gt;] T1: Aldea</option>
                             <option value="2">[&gt;] T2: Taberna</option>
                             <option value="3">[&gt;] T3: Crunchy</option>
@@ -91,206 +267,116 @@
                         </select>
                     </div>
                 </div>
-
-                <div class="volume-control">
-                    <span class="vol-icon">
-                        <svg viewBox="0 0 16 16" width="12" height="12" shape-rendering="crispEdges" fill="currentColor"
-                            style="vertical-align: middle;">
-                            <rect x="2" y="6" width="3" height="4" />
-                            <rect x="5" y="5" width="1" height="6" />
-                            <rect x="6" y="4" width="1" height="8" />
-                            <rect x="7" y="3" width="2" height="10" />
-                            <rect x="11" y="5" width="1" height="6" />
-                        </svg>
-                    </span>
-                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3"
-                        oninput="updateVolume()" title="Volumen General">
-                </div>
             </div>
         </div>
     </div>
-
-    <header>
-        <div class="ide-header-box">
-            <div class="window-header">
-                <div class="window-dot dot-red"></div>
-                <div class="window-dot dot-yellow"></div>
-                <div class="window-dot dot-green"></div>
-                <span class="window-title">main.js - gamelife.dev</span>
-            </div>
-            <div class="header-content">
-                <h1>gamelife.dev | Tu vida en un juego</h1>
-                <p class="subtitle-el"></p>
-            </div>
-        </div>
-
-        <div class="retro-header-box">
-            <h1>gamelife.dev | Tu vida en un juego</h1>
-            <p class="subtitle-el"></p>
-        </div>
-    </header>
 
     <!-- DASHBOARD GRID -->
     <div class="dashboard">
-        <!-- COLUMNA IZQUIERDA -->
-        <aside class="sidebar">
-            <div class="panel">
-                <div class="panel-title">
-                    <svg class="pixel-icon" viewBox="0 0 16 16">
-                        <rect x="6" y="2" width="4" height="4" />
-                        <rect x="5" y="6" width="6" height="2" />
-                        <rect x="3" y="9" width="10" height="2" />
-                        <rect x="2" y="11" width="12" height="4" />
-                    </svg>
-                    <span class="title-avatar"></span>
-                </div>
-
-                <button class="btn-gear" onclick="openModal('profile-modal')" title="Editar Perfil">
-                    <svg class="gear-icon" viewBox="0 0 16 16" shape-rendering="crispEdges" fill="var(--text-dim)">
-                        <rect x="6" y="0" width="4" height="2" />
-                        <rect x="0" y="6" width="2" height="4" />
-                        <rect x="14" y="6" width="2" height="4" />
-                        <rect x="6" y="14" width="4" height="2" />
-                        <rect x="4" y="2" width="8" height="12" />
-                        <rect x="2" y="4" width="12" height="8" />
-                        <rect x="6" y="6" width="4" height="4" fill="var(--panel-bg)" />
-                    </svg>
-                </button>
-
-                <div class="avatar-container">
-                    <div class="avatar-box" id="avatar-preview"></div>
-                    <div class="avatar-info" style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">
-                        <h3 id="display-name" style="margin:0;">CREATOR</h3>
-                        <p class="equipped-title" id="hud-equipped-title" style="margin:0;">Héroe Activo</p>
-                        <p id="hud-level-text" style="font-size: 0.55rem; color: var(--primary-color); margin:0;">Nv. 1</p>
-                    </div>
-                </div>
-                
-                <div class="hud-bars">
-                    <div class="hud-bar-container">
-                        <div class="hud-hp-fill" id="hud-hp-fill" style="width: 100%;"></div>
-                        <span class="hud-text" id="hud-hp-text">HP: 100/100</span>
-                    </div>
-                    <div class="hud-bar-container">
-                        <div class="hud-xp-fill" id="hud-xp-fill" style="width: 0%;"></div>
-                        <span class="hud-text" id="hud-xp-text">XP: 0/100</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                        <div class="hud-streak" style="margin-top: 0;">
-                            <span id="hud-streak-text" class="streak-flame" title="Días de racha">🔥 0</span>
-                            <span id="hud-shield-text" style="margin-left: 10px;" title="Escudos protectores">🛡️ 0/2</span>
-                            <span id="hud-gold-text" style="margin-left: 10px; color: var(--tier-gold, #ffd700);" title="Oro disponible">🪙 0</span>
-                        </div>
-                        <button class="btn-pixel" style="padding: 10px; font-size: 0.45rem;" onclick="openModal('rest-modal')">DESCANSAR</button>
-                    </div>
-                </div>
-                
-                <div class="bio-text" id="display-bio" style="margin-top: 25px;">"Construyendo el cambio, forjando ideas..."</div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title">
-                    <svg class="pixel-icon" viewBox="0 0 16 16">
-                        <rect x="7" y="1" width="2" height="2" />
-                        <rect x="5" y="3" width="6" height="2" />
-                        <rect x="3" y="5" width="10" height="6" />
-                        <rect x="5" y="11" width="6" height="2" />
-                        <rect x="7" y="13" width="2" height="2" />
-                    </svg>
-                    <span class="title-stats"></span>
-                </div>
-
-                <button class="btn-gear" onclick="openModal('stats-modal')" title="Configurar Stats">
-                    <svg class="gear-icon" viewBox="0 0 16 16" shape-rendering="crispEdges" fill="var(--text-dim)">
-                        <rect x="6" y="0" width="4" height="2" />
-                        <rect x="0" y="6" width="2" height="4" />
-                        <rect x="14" y="6" width="2" height="4" />
-                        <rect x="6" y="14" width="4" height="2" />
-                        <rect x="4" y="2" width="8" height="12" />
-                        <rect x="2" y="4" width="12" height="8" />
-                        <rect x="6" y="6" width="4" height="4" fill="var(--panel-bg)" />
-                    </svg>
-                </button>
-
-                <div class="stat-group">
-                    <div class="stat-label"><span>Fuerza</span><span id="text-fuerza">Nv.1 | 0/100</span></div>
-                    <div class="stat-bar-container">
-                        <div class="stat-bar-fill" id="bar-fuerza"></div>
-                    </div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-label"><span>Sabiduría</span><span id="text-sabiduria">Nv.1 | 0/100</span></div>
-                    <div class="stat-bar-container">
-                        <div class="stat-bar-fill" id="bar-sabiduria"></div>
-                    </div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-label"><span>Creatividad</span><span id="text-creatividad">Nv.1 | 0/100</span>
-                    </div>
-                    <div class="stat-bar-container">
-                        <div class="stat-bar-fill" id="bar-creatividad"></div>
-                    </div>
-                </div>
-                <div class="stat-group">
-                    <div class="stat-label"><span>Carisma</span><span id="text-carisma">Nv.1 | 0/100</span></div>
-                    <div class="stat-bar-container">
-                        <div class="stat-bar-fill" id="bar-carisma"></div>
-                    </div>
-                </div>
+        
+        <!-- COLUMNA IZQUIERDA: MENÚ -->
+        <aside class="sidebar panel">
+            <button class="btn-menu active" onclick="showPanel('missions')"><img src="assets/misions.png" class="sprite-icon" style="margin:0;"> MISIONES</button>
+            <button class="btn-menu" onclick="showPanel('base')"><img src="assets/stats.png" class="sprite-icon" style="margin:0;"> STATS</button>
+            <button class="btn-menu" onclick="openModal('profile-modal')"><img src="assets/profile.png" class="sprite-icon" style="margin:0;"> PERFIL</button>
+            <button class="btn-menu" onclick="ChronicleUI.open()"><img src="assets/goals.png" class="sprite-icon" style="margin:0;"> LOGROS</button>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 40px;" class="mobile-hide">
+                <button class="btn-menu" style="color: var(--text-dim); opacity: 0.6;"><img src="assets/cash.png" class="sprite-icon" style="margin:0;"> TIENDA</button>
+                <button class="btn-menu" style="color: var(--text-dim); opacity: 0.6;"><img src="assets/guild.png" class="sprite-icon" style="margin:0;"> GREMIO</button>
             </div>
         </aside>
 
-        <!-- COLUMNA DERECHA -->
-        <main class="main-content">
-            <div class="panel">
-                <div class="panel-title">
-                    <svg class="pixel-icon" viewBox="0 0 16 16">
-                        <rect x="7" y="1" width="2" height="2" />
-                        <rect x="5" y="3" width="6" height="2" />
-                        <rect x="3" y="5" width="10" height="6" />
-                        <rect x="5" y="11" width="6" height="2" />
-                        <rect x="7" y="13" width="2" height="2" />
-                    </svg>
-                    <span class="title-radar"></span>
+        <!-- COLUMNA CENTRAL: MISIONES Y BASE -->
+        <main class="main-content panel" id="main-column" style="padding: 40px;">
+            <!-- TAB: MISIONES -->
+            <div class="panel-missions tab-view active" id="view-missions">
+                <div class="panel-title">MISIONES DEL DÍA</div>
+                <div id="missions-container"></div>
+                <button class="btn-pixel" onclick="openModal('mission-modal')" style="width: 100%; margin-top: 30px; padding: 25px; font-weight: normal; background-color: var(--bg-color); color: var(--primary-color); border: 2px dashed var(--primary-color); font-size: 1rem; letter-spacing: 1px;">[+] NUEVA MISIÓN</button>
+            </div>
+
+            <!-- TAB: MI BASE -->
+            <div class="panel-base tab-view" id="view-base" style="display: none; height: 100%;">
+                <div class="panel-title">[ SANTUARIO DEL HÉROE ]</div>
+                <div id="base-viewport" style="width: 100%; height: calc(100% - 60px); background: #111; position: relative; border: 4px solid var(--border-color); box-shadow: inset 4px 4px 0px rgba(0,0,0,0.8); overflow: hidden; image-rendering: pixelated; border-radius: 2px;"></div>
+            </div>
+        </main>
+
+        <!-- COLUMNA DERECHA: ATRIBUTOS Y RECOMPENSAS -->
+        <aside class="sidebar panel">
+            <div style="position: relative;">
+                <div class="panel-title">ATRIBUTOS DEL HÉROE</div>
+                <button onclick="openModal('stats-modal')" title="Configurar Stats" style="position: absolute; right: 0; top: -5px; background: none; border: none; cursor: pointer; opacity: 0.7;">
+                    <img src="assets/settings.png" class="sprite-icon small" style="margin:0;">
+                </button>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">
+                    <span><img src="assets/force.png" class="sprite-icon small" style="margin:0 8px 0 0;">Fuerza (Físico)</span>
+                    <span id="text-fuerza" style="color: var(--primary-color); font-family: 'Press Start 2P', monospace; font-size: 0.75rem;">Lvl 1</span>
                 </div>
-                <div class="radar-placeholder">
-                    <svg id="radar-svg" viewBox="0 0 300 200" width="100%" height="100%">
-                        <line x1="150" y1="20" x2="150" y2="180" class="radar-grid" />
-                        <line x1="70" y1="100" x2="230" y2="100" class="radar-grid" />
-                        <polygon points="150,20 230,100 150,180 70,100" class="radar-grid" fill="none" />
-                        <polygon points="150,60 190,100 150,140 110,100" class="radar-grid" fill="none" />
-                        <polygon id="radar-polygon" points="150,100 150,100 150,100 150,100" class="radar-stat-shape" />
-                        <text x="150" y="12" class="radar-label" text-anchor="middle">SAB</text>
-                        <text x="250" y="104" class="radar-label" text-anchor="middle">CRE</text>
-                        <text x="150" y="196" class="radar-label" text-anchor="middle">CAR</text>
-                        <text x="50" y="104" class="radar-label" text-anchor="middle">FUE</text>
-                    </svg>
+                <div class="stat-bar-container" style="height: 14px; background: var(--bg-color); border: 2px solid var(--border-color);">
+                    <div class="stat-bar-fill stat-fuerza" id="bar-fuerza" style="height: 100%; background: #bf616a;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">
+                    <span>🧠 Intelecto (Estudio)</span>
+                    <span id="text-sabiduria" style="color: var(--primary-color); font-family: 'Press Start 2P', monospace; font-size: 0.75rem;">Lvl 1</span>
+                </div>
+                <div class="stat-bar-container" style="height: 14px; background: var(--bg-color); border: 2px solid var(--border-color);">
+                    <div class="stat-bar-fill stat-sabiduria" id="bar-sabiduria" style="height: 100%; background: #5e81ac;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">
+                    <span>💚 Espíritu (Mental)</span>
+                    <span id="text-creatividad" style="color: var(--primary-color); font-family: 'Press Start 2P', monospace; font-size: 0.75rem;">Lvl 1</span>
+                </div>
+                <div class="stat-bar-container" style="height: 14px; background: var(--bg-color); border: 2px solid var(--border-color);">
+                    <div class="stat-bar-fill stat-creatividad" id="bar-creatividad" style="height: 100%; background: #a3be8c;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-group">
+                <div class="stat-label">
+                    <span>🤝 Social (Familia)</span>
+                    <span id="text-carisma" style="color: var(--primary-color); font-family: 'Press Start 2P', monospace; font-size: 0.75rem;">Lvl 1</span>
+                </div>
+                <div class="stat-bar-container" style="height: 14px; background: var(--bg-color); border: 2px solid var(--border-color);">
+                    <div class="stat-bar-fill stat-carisma" id="bar-carisma" style="height: 100%; background: #d08770;"></div>
                 </div>
             </div>
 
-            <div class="panel panel-missions">
-                <div class="panel-title">
-                    <svg class="pixel-icon" viewBox="0 0 16 16">
-                        <rect x="2" y="12" width="2" height="2" />
-                        <rect x="4" y="10" width="2" height="2" />
-                        <rect x="6" y="8" width="2" height="2" />
-                        <rect x="8" y="6" width="2" height="2" />
-                        <rect x="10" y="4" width="2" height="2" />
-                        <rect x="12" y="2" width="2" height="2" />
-                        <rect x="12" y="12" width="2" height="2" />
-                        <rect x="10" y="10" width="2" height="2" />
-                        <rect x="4" y="4" width="2" height="2" />
-                        <rect x="2" y="2" width="2" height="2" />
-                    </svg>
-                    <span class="title-missions"></span>
-                </div>
-                <div id="missions-container"></div>
-                <button class="btn-save-modal" onclick="openModal('mission-modal')"
-                    style="margin-top: 15px; background-color: var(--panel-bg); color: var(--primary-color); border: 2px dashed var(--primary-color);">[+]
-                    NUEVA MISIÓN</button>
-            </div>
-        </main>
+            <hr style="border: 1px solid var(--border-color); margin: 40px 0 30px 0; opacity: 0.5;">
+            
+            <div class="panel-title" style="margin-bottom: 20px; font-size: 1rem;">INVENTARIO DE RECOMPENSAS</div>
+            <div style="font-family: 'Pixelify Sans', sans-serif; font-size: 0.95rem; margin-bottom: 25px; color: var(--text-dim); text-align: center;">Gastar el oro ganado:</div>
+            
+            <div id="shop-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </aside>
     </div>
+
+    <!-- Script de navegación de tabs -->
+    <script>
+        function showPanel(panelName) {
+            document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
+            document.getElementById('view-' + panelName).style.display = 'block';
+            
+            if (event && event.currentTarget) {
+                document.querySelectorAll('.btn-menu').forEach(btn => btn.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+            }
+            
+            if(panelName === 'base' && window.BaseUI && window.BaseUI.renderV4) {
+                window.BaseUI.renderV4();
+            }
+        }
+    </script>
 
     <!-- TOAST GENÉRICO -->
     <div id="generic-toast" class="level-toast">
@@ -317,15 +403,11 @@
     <!-- MODAL DE CONFIRMACIÓN -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <div class="modal-title" style="margin-bottom: 20px;">> SISTEMA</div>
-            <p id="confirm-message"
-                style="color: var(--text-color); font-size: 0.6rem; margin-bottom: 25px; line-height: 1.6;">¿Seguro que
-                deseas proceder?</p>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <button class="btn-pixel" onclick="confirmYes()"
-                    style="background-color: var(--primary-color); color: var(--bg-color);">SÍ, PROCEDER</button>
-                <button class="btn-pixel" onclick="closeModal('confirm-modal')"
-                    style="border-color: #EF4444; color: #EF4444;">CANCELAR</button>
+            <div class="panel-title" style="margin-bottom: 25px;">> SISTEMA</div>
+            <p id="confirm-message" style="color: var(--text-color); font-family: 'Pixelify Sans', sans-serif; font-size: 1.1rem; margin-bottom: 35px; line-height: 1.6;">¿Seguro que deseas proceder?</p>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <button class="btn-pixel" onclick="confirmYes()" style="background-color: var(--primary-color); color: var(--bg-color); padding: 15px 25px;">SÍ, PROCEDER</button>
+                <button class="btn-pixel" onclick="closeModal('confirm-modal')" style="border-color: #EF4444; color: #EF4444; padding: 15px 25px;">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -333,32 +415,31 @@
     <!-- MODAL: NUEVA MISIÓN -->
     <div class="modal-overlay" id="mission-modal">
         <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> NUEVA_MISIÓN</div>
+            <div class="modal-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div class="panel-title" style="margin:0; border:none; padding:0;">> NUEVA_MISIÓN</div>
                 <button class="btn-pixel-close" onclick="closeModal('mission-modal')" title="Cerrar">X</button>
             </div>
-            <div class="edit-profile-box">
-                <label>> Título de la tarea:</label>
-                <input type="text" id="new-mission-name" placeholder="Ej: Entrenar tren superior">
+            <div class="edit-profile-box" style="display:flex; flex-direction:column; gap: 15px;">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Título de la tarea:</label>
+                <input type="text" id="new-mission-name" placeholder="Ej: Entrenar tren superior" class="pixel-input" style="padding:15px; margin-bottom:10px;">
 
-                <label>> Atributo que mejora:</label>
-                <select id="new-mission-stat" class="pixel-select">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Atributo que mejora:</label>
+                <select id="new-mission-stat" class="pixel-select" style="padding:15px; margin-bottom:10px;">
                     <option value="fuerza">Fuerza</option>
                     <option value="sabiduria">Sabiduría</option>
                     <option value="creatividad">Creatividad</option>
                     <option value="carisma">Carisma</option>
                 </select>
 
-                <label>> Nivel de Dificultad (XP Fija):</label>
-                <select id="new-mission-level" class="pixel-select">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Dificultad (XP Fija):</label>
+                <select id="new-mission-level" class="pixel-select" style="padding:15px; margin-bottom:25px;">
                     <option value="1">Nivel 1 (Fácil) - 10 XP</option>
                     <option value="2" selected>Nivel 2 (Medio) - 20 XP</option>
                     <option value="3">Nivel 3 (Difícil) - 35 XP</option>
                     <option value="4">Nivel 4 (Épico) - 50 XP</option>
                 </select>
 
-                <button class="btn-save-modal" onclick="saveNewMission()" style="margin-top: 20px;">Crear
-                    Misión</button>
+                <button class="btn-pixel" onclick="saveNewMission()" style="padding:20px; font-size:1rem; background: var(--primary-color); color: var(--bg-color);">Crear Misión</button>
             </div>
         </div>
     </div>
@@ -366,163 +447,84 @@
     <!-- MODAL: EDITAR PERFIL -->
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> EDITAR_PERFIL</div>
+            <div class="modal-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div class="panel-title" style="margin:0; border:none; padding:0;">> EDITAR_PERFIL</div>
                 <button class="btn-pixel-close" onclick="closeModal('profile-modal')" title="Cerrar">X</button>
             </div>
-            <div class="edit-profile-box scroll-box">
-                <label>> Cambiar Nombre:</label>
-                <input type="text" id="input-name" placeholder="Tu Nombre / Nick" oninput="updateProfileLive()">
+            <div class="edit-profile-box scroll-box" style="display:flex; flex-direction:column; gap: 15px;">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Cambiar Nombre:</label>
+                <input type="text" id="input-name" placeholder="Tu Nombre / Nick" oninput="updateProfileLive()" class="pixel-input" style="padding:15px;">
 
-                <label>> Descripción corta (Bio):</label>
-                <textarea id="input-bio" placeholder="Escribe tu objetivo..." oninput="updateProfileLive()"></textarea>
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Descripción corta (Bio):</label>
+                <textarea id="input-bio" placeholder="Escribe tu objetivo..." oninput="updateProfileLive()" class="pixel-input" style="padding:15px; height:80px;"></textarea>
 
-                <label>> URL de Avatar:</label>
-                <input type="text" id="input-avatar" placeholder="https://..." oninput="updateProfileLive()">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> URL de Avatar:</label>
+                <input type="text" id="input-avatar" placeholder="https://..." oninput="updateProfileLive()" class="pixel-input" style="padding:15px;">
 
-                <label>> Archivo Local (O Ctrl+V):</label>
-                <div class="drop-zone" id="avatar-drop-zone" onclick="document.getElementById('input-file').click()">
-                    <div id="file-label" class="drop-zone-text">[+] Haz Clic, Arrastra o Pega tu Avatar aquí</div>
-                    <input type="file" id="input-file" accept="image/*,.gif" onchange="handleFileSelect(event)"
-                        style="display: none;">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Archivo Local (O Ctrl+V):</label>
+                <div class="drop-zone" id="avatar-drop-zone" onclick="document.getElementById('input-file').click()" style="padding:30px; border:2px dashed var(--primary-color); text-align:center; cursor:pointer;">
+                    <div id="file-label" class="drop-zone-text" style="font-family:'Pixelify Sans', sans-serif;">[+] Haz Clic, Arrastra o Pega tu Avatar aquí</div>
+                    <input type="file" id="input-file" accept="image/*,.gif" onchange="handleFileSelect(event)" style="display: none;">
                 </div>
             </div>
-            <button class="btn-save-modal" onclick="closeModal('profile-modal')"
-                style="margin-top: 20px; flex-shrink: 0;">Guardar y Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL: EDITAR FONDO -->
-    <div class="modal-overlay" id="bg-modal">
-        <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> CONFIGURAR_FONDO</div>
-                <button class="btn-pixel-close" onclick="closeModal('bg-modal')" title="Cerrar">X</button>
-            </div>
-            <div class="edit-profile-box scroll-box">
-
-                <div class="format-hint">
-                    > INFO: El fondo se guarda únicamente para el tema visual que tienes activo en este momento.
-                </div>
-
-                <label>> URL de fondo:</label>
-                <input type="text" id="input-bg-url" placeholder="https://..." oninput="updateBackgroundLive()">
-
-                <label>> Archivo Local (O Ctrl+V):</label>
-                <div class="drop-zone" id="bg-drop-zone" onclick="document.getElementById('input-bg-file').click()">
-                    <div id="bg-file-label" class="drop-zone-text">[^] Haz Clic, Arrastra o Pega el Fondo aquí</div>
-                    <input type="file" id="input-bg-file" accept="image/*,.gif" onchange="handleBgFileSelect(event)"
-                        style="display: none;">
-                </div>
-
-                <button class="btn-delete-bg" onclick="clearBackground()">[x] ELIMINAR FONDO ACTUAL</button>
-
-            </div>
-            <button class="btn-save-modal" onclick="closeModal('bg-modal')"
-                style="margin-top: 20px; flex-shrink: 0;">Guardar y Cerrar</button>
+            <button class="btn-pixel" onclick="closeModal('profile-modal')" style="margin-top: 25px; width: 100%; padding: 15px;">Guardar y Cerrar</button>
         </div>
     </div>
 
     <!-- MODAL: CONFIGURAR TEMAS Y APARIENCIA -->
     <div class="modal-overlay" id="theme-modal">
         <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header-flex">
-                <div class="modal-title">> APARIENCIA_Y_TEMAS</div>
+            <div class="modal-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div class="panel-title" style="margin:0; border:none; padding:0;">> APARIENCIA_Y_TEMAS</div>
                 <button class="btn-pixel-close" onclick="closeModal('theme-modal')" title="Cerrar">X</button>
             </div>
-            <div class="edit-profile-box">
-                <label>> Selecciona un tema visual:</label>
-                <div class="theme-grid-modal">
-                    <button class="btn-theme" onclick="setTheme('terminal')">Terminal</button>
-                    <button class="btn-theme" onclick="setTheme('synthwave')">Synthwave</button>
-                    <button class="btn-theme" onclick="setTheme('matrix')">Matrix</button>
-                    <button class="btn-theme" onclick="setTheme('light-minimal')">Light Min</button>
-                    <button class="btn-theme" onclick="setTheme('dark-minimal')">Dark Min</button>
-                    <button class="btn-theme" onclick="setTheme('rpg-retro')">RPG Retro</button>
+            <div class="edit-profile-box" style="display:flex; flex-direction:column; gap: 15px;">
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem;">> Selecciona un tema visual:</label>
+                <div class="theme-grid-modal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <button class="btn-pixel" onclick="setTheme('terminal')" style="padding:15px;">Terminal</button>
+                    <button class="btn-pixel" onclick="setTheme('synthwave')" style="padding:15px;">Synthwave</button>
+                    <button class="btn-pixel" onclick="setTheme('matrix')" style="padding:15px;">Matrix</button>
+                    <button class="btn-pixel" onclick="setTheme('light-minimal')" style="padding:15px;">Light Min</button>
+                    <button class="btn-pixel" onclick="setTheme('dark-minimal')" style="padding:15px;">Dark Min</button>
+                    <button class="btn-pixel" onclick="setTheme('rpg-retro')" style="padding:15px;">RPG Retro</button>
                 </div>
 
-                <label style="margin-top: 20px;">> Fondo Personalizado:</label>
-                <button class="btn-pixel" onclick="closeModal('theme-modal'); openModal('bg-modal');"
-                    style="width: 100%; border-color: var(--primary-color); color: var(--primary-color); padding: 12px; margin-top: 5px;">
-                    <svg viewBox="0 0 16 16" width="14" height="14" shape-rendering="crispEdges" fill="currentColor"
-                        style="vertical-align: middle; margin-right: 6px;">
-                        <rect x="1" y="2" width="14" height="12" />
-                        <rect x="3" y="4" width="10" height="8" fill="var(--bg-color)" />
-                        <rect x="9" y="5" width="2" height="2" />
-                        <rect x="4" y="9" width="4" height="3" />
-                        <rect x="5" y="8" width="2" height="1" />
-                        <rect x="7" y="10" width="4" height="2" />
-                    </svg>
+                <label style="font-family:'Pixelify Sans', sans-serif; font-size:1.1rem; margin-top:20px;">> Fondo Personalizado:</label>
+                <button class="btn-pixel" onclick="closeModal('theme-modal'); openModal('bg-modal');" style="width: 100%; border-color: var(--primary-color); color: var(--primary-color); padding: 15px;">
                     CONFIGURAR FONDO DEL TEMA
                 </button>
             </div>
-            <button class="btn-save-modal" onclick="closeModal('theme-modal')" style="margin-top: 20px;">LISTO</button>
-        </div>
-    </div>
-
-    <!-- MODAL: RESETEAR STATS -->
-    <div class="modal-overlay" id="stats-modal">
-        <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> CONFIGURACIÓN_STATS</div>
-                <button class="btn-pixel-close" onclick="closeModal('stats-modal')" title="Cerrar">X</button>
-            </div>
-            <div class="edit-profile-box" style="text-align: center;">
-                <p style="color: var(--text-color); font-size: 0.6rem; line-height: 1.6; margin-bottom: 20px;">¿Deseas
-                    reiniciar todas tus estadísticas a cero?<br><br>Volverás al Nivel 1 y perderás tu progreso actual.
-                </p>
-                <button class="btn-save-modal" style="background-color: #EF4444; color: #fff; border-color: #7f1d1d;"
-                    onclick="resetStats()">RESET DE STATS A CERO</button>
-            </div>
+            <button class="btn-pixel" onclick="closeModal('theme-modal')" style="margin-top: 25px; width: 100%; padding: 15px;">LISTO</button>
         </div>
     </div>
 
     <!-- MODAL: GESTIÓN DE PARTIDA (SAVE) -->
     <div class="modal-overlay" id="save-modal">
         <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> GESTIÓN_DE_PARTIDA</div>
+            <div class="modal-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div class="panel-title" style="margin:0; border:none; padding:0;">> GESTIÓN_DE_PARTIDA</div>
                 <button class="btn-pixel-close" onclick="closeModal('save-modal')" title="Cerrar">X</button>
             </div>
-            <div class="edit-profile-box">
-                <button class="btn-pixel" style="width:100%; margin-bottom:10px; border-color: var(--primary-color);" onclick="SaveSystem.createSavePoint()">
-                    Crear Punto de Guardado (Ctrl+S)
+            <div class="edit-profile-box" style="display:flex; flex-direction:column; gap: 15px;">
+                <button class="btn-pixel" style="width:100%; padding: 15px; border-color: var(--primary-color);" onclick="SaveSystem.createSavePoint()">
+                    Crear Punto de Guardado
                 </button>
-                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="SaveSystem.restoreSavePoint()">
+                <button class="btn-pixel" style="width:100%; padding: 15px;" onclick="SaveSystem.restoreSavePoint()">
                     Restaurar Punto de Guardado
                 </button>
-                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="SaveSystem.exportData()">
+                <button class="btn-pixel" style="width:100%; padding: 15px;" onclick="SaveSystem.exportData()">
                     Exportar (.json)
                 </button>
-                <button class="btn-pixel" style="width:100%; margin-bottom:10px;" onclick="document.getElementById('import-file').click()">
+                <button class="btn-pixel" style="width:100%; padding: 15px;" onclick="document.getElementById('import-file').click()">
                     Importar (.json)
                 </button>
                 <input type="file" id="import-file" accept=".json" onchange="SaveSystem.importData(event)" style="display:none;">
-                <button class="btn-pixel" style="width:100%; margin-bottom:10px; border-color: #e74c3c; color: #e74c3c;" onclick="SaveSystem.newGame()">
+                
+                <hr style="border: 1px dashed var(--border-color); margin: 15px 0;">
+                
+                <button class="btn-pixel" style="width:100%; padding: 15px; border-color: #e74c3c; color: #e74c3c;" onclick="SaveSystem.newGame()">
                     Nueva Partida
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: CONSTRUCTOR DE BASE -->
-    <div class="modal-overlay" id="base-modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <div class="modal-header-flex">
-                <div class="modal-title">> MI_LEGADO</div>
-                <button class="btn-pixel-close" onclick="closeModal('base-modal')" title="Cerrar">X</button>
-            </div>
-            
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 0.55rem; color: var(--text-dim); margin-bottom: 20px;">Invierte tu oro en construir un monumento a tu constancia. No es consumismo, es construcción.</div>
-                
-                <div id="base-icon-display" style="font-size: 4rem; margin-bottom: 10px; text-shadow: 2px 2px 0 #000;">🔥</div>
-                <div id="base-name-display" style="font-size: 1rem; color: var(--primary-color); margin-bottom: 5px;">Fogata Solitaria</div>
-                <div id="base-desc-display" style="font-size: 0.55rem; color: var(--text-color); margin-bottom: 25px; line-height: 1.4;">Apenas un fuego para calentarte. El inicio de tu viaje.</div>
-                
-                <div id="base-action-container">
-                    <!-- Action injected via JS -->
-                </div>
             </div>
         </div>
     </div>
@@ -530,16 +532,16 @@
     <!-- MODAL: CRÓNICAS DEL HÉROE -->
     <div class="modal-overlay" id="chronicle-modal">
         <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header-flex">
-                <div class="modal-title">> CRÓNICAS_DEL_HÉROE</div>
+            <div class="modal-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div class="panel-title" style="margin:0; border:none; padding:0;">> CRÓNICAS_DEL_HÉROE</div>
                 <button class="btn-pixel-close" onclick="closeModal('chronicle-modal')" title="Cerrar">X</button>
             </div>
-            <div class="chronicle-tabs" style="display:flex; gap:5px; margin-bottom:15px; border-bottom: 2px dashed var(--border-color); padding-bottom:10px; overflow-x: auto;">
-                <button class="btn-pixel btn-tab" id="btn-tab-medals" onclick="ChronicleUI.switchTab('medals')">Medallas</button>
-                <button class="btn-pixel btn-tab" id="btn-tab-titles" onclick="ChronicleUI.switchTab('titles')">Títulos</button>
-                <button class="btn-pixel btn-tab" id="btn-tab-history" onclick="ChronicleUI.switchTab('history')">Crónica</button>
+            <div class="chronicle-tabs" style="display:flex; gap:10px; margin-bottom:20px; border-bottom: 2px dashed var(--border-color); padding-bottom:15px; overflow-x: auto;">
+                <button class="btn-pixel btn-tab" id="btn-tab-medals" onclick="ChronicleUI.switchTab('medals')" style="padding:15px;">Medallas</button>
+                <button class="btn-pixel btn-tab" id="btn-tab-titles" onclick="ChronicleUI.switchTab('titles')" style="padding:15px;">Títulos</button>
+                <button class="btn-pixel btn-tab" id="btn-tab-history" onclick="ChronicleUI.switchTab('history')" style="padding:15px;">Crónica</button>
             </div>
-            <div class="edit-profile-box scroll-box" style="height: 300px; overflow-y: auto;">
+            <div class="edit-profile-box scroll-box" style="height: 350px; overflow-y: auto;">
                 <div id="tab-medals-content" class="chronicle-tab"></div>
                 <div id="tab-titles-content" class="chronicle-tab" style="display:none;"></div>
                 <div id="tab-history-content" class="chronicle-tab" style="display:none;"></div>
@@ -547,55 +549,7 @@
         </div>
     </div>
 
-    <!-- MODAL: REPORTE -->
-    <div class="modal-overlay" id="report-modal">
-        <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> REPORTE_DE_REGRESO</div>
-                <button class="btn-pixel-close" onclick="closeModal('report-modal')" title="Cerrar">X</button>
-            </div>
-            <div class="edit-profile-box" style="text-align: left;">
-                <p id="report-details" style="font-size: 0.6rem; line-height: 1.6;"></p>
-                <button class="btn-save-modal" onclick="closeModal('report-modal')" style="margin-top: 20px;">ENTENDIDO</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: GAME OVER -->
-    <div class="modal-overlay" id="gameover-modal">
-        <div class="modal-content" style="border-color: var(--hp-color); box-shadow: 10px 10px 0px var(--hp-color);">
-            <div class="modal-header-flex">
-                <div class="modal-title" style="color: var(--hp-color);">> GAME_OVER</div>
-            </div>
-            <div class="edit-profile-box" style="text-align: center;">
-                <h1 style="color: var(--hp-color); font-size: 1.5rem; margin-bottom: 20px;">HAS CAÍDO</h1>
-                <p style="font-size: 0.6rem; line-height: 1.6; color: var(--text-color);">
-                    Tu HP llegó a 0.<br><br>
-                    Pierdes 1 Nivel de Héroe.<br>
-                    Tus atributos están intactos.<br><br>
-                    Levántate de nuevo.
-                </p>
-                <button class="btn-save-modal" onclick="closeModal('gameover-modal')" style="margin-top: 20px; background-color: var(--hp-color); border-color: var(--hp-low);">CONTINUAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: DESCANSO -->
-    <div class="modal-overlay" id="rest-modal">
-        <div class="modal-content">
-            <div class="modal-header-flex">
-                <div class="modal-title">> MODO_DESCANSO</div>
-                <button class="btn-pixel-close" onclick="closeModal('rest-modal')" title="Cerrar">X</button>
-            </div>
-            <div class="edit-profile-box">
-                <p style="font-size: 0.55rem; line-height: 1.5; margin-bottom: 15px;">Programa un día de descanso para congelar HP y racha. Máx 3 por mes.</p>
-                <input type="date" id="rest-date-input" class="pixel-select" style="margin-bottom: 15px;">
-                <button class="btn-save-modal" onclick="Rest.scheduleRest(document.getElementById('rest-date-input').value); closeModal('rest-modal');">PROGRAMAR DESCANSO</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- v3 Scripts -->
+    <!-- Scripts JRPG -->
     <script src="js/core/utils.js"></script>
     <script src="js/core/bus.js"></script>
     <script src="js/core/state.js"></script>
@@ -614,9 +568,11 @@
     <script src="js/systems/save.js"></script>
     <script src="js/systems/economy.js"></script>
     <script src="js/systems/base.js"></script>
+    <script src="js/ui/fx.js"></script>
     <script src="js/ui/hud.js"></script>
     <script src="js/ui/chronicle.js"></script>
     <script src="js/main-v3.js"></script>
 </body>
-
 </html>
+
+

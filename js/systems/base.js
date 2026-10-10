@@ -1,70 +1,111 @@
 // js/systems/base.js
 const BaseUI = {
-    STAGES: {
-        1: { name: "Fogata Solitaria", icon: "🔥", cost: 0, desc: "Apenas un fuego para calentarte. El inicio de tu viaje." },
-        2: { name: "Tienda de Campaña", icon: "⛺", cost: 500, desc: "Un refugio rudimentario. Protege de la tormenta." },
-        3: { name: "Cabaña de Madera", icon: "🛖", cost: 2000, desc: "Estructura sólida. Muestra tu constancia inquebrantable." },
-        4: { name: "Fuerte de Piedra", icon: "🏰", cost: 5000, desc: "Un baluarte defensivo. Disciplina forjada en hierro." },
-        5: { name: "Ciudadela del Héroe", icon: "🏛️", cost: 15000, desc: "Tu legado en la tierra. Un monumento eterno a tu esfuerzo." }
-    },
-    
-    open() {
-        this.render();
-        openModal('base-modal');
-    },
-
-    render() {
-        if (!StateManager.data.base) {
-            StateManager.data.base = { level: 1 };
+    initV4() {
+        if (!StateManager.data.pet) {
+            StateManager.data.pet = { level: 1, exp: 0, state: 'happy' };
         }
+    },
 
-        const currentLvl = StateManager.data.base.level;
-        const stage = this.STAGES[currentLvl];
-        const nextStage = this.STAGES[currentLvl + 1];
+    renderV4() {
+        this.initV4();
+        const viewport = document.getElementById('base-viewport');
+        if (!viewport) return;
 
-        document.getElementById('base-icon-display').textContent = stage.icon;
-        document.getElementById('base-name-display').textContent = stage.name;
-        document.getElementById('base-desc-display').textContent = stage.desc;
+        // Limpiar
+        viewport.innerHTML = '';
+        viewport.className = 'base-viewport'; // Limpiar clases extras
 
-        const actionContainer = document.getElementById('base-action-container');
-        if (nextStage) {
-            const canAfford = Economy.canAfford(nextStage.cost);
-            actionContainer.innerHTML = `
-                <div style="font-size: 0.55rem; color: var(--text-dim); margin-bottom: 10px;">
-                    Próxima evolución: <strong style="color:var(--text-color);">${nextStage.name}</strong>
-                </div>
-                <button class="btn-pixel" style="padding: 15px; width: 100%; border-color: ${canAfford ? 'var(--tier-gold, #ffd700)' : 'var(--border-color)'}; color: ${canAfford ? 'var(--bg-color)' : 'var(--text-dim)'}; background-color: ${canAfford ? 'var(--tier-gold, #ffd700)' : 'transparent'};" 
-                        onclick="BaseUI.upgrade()" ${!canAfford ? 'disabled' : ''}>
-                    INVERTIR ${nextStage.cost} 🪙 PARA CONSTRUIR
-                </button>
-            `;
+        const state = StateManager.data;
+        const stats = state.stats;
+        const streak = state.streaks?.current || 0;
+        const maxStreak = state.streaks?.max || 0;
+        const heroLevel = state.hero?.level || 1;
+
+        // 1. Clima y Cielo (Basado en racha)
+        if (streak >= 7) {
+            viewport.classList.add('weather-sunny');
+            viewport.innerHTML += '<div style="position:absolute; top:10px; right:20px; font-size:40px; z-index: 1;">☀️</div>';
+        } else if (streak >= 1) {
+            viewport.style.backgroundColor = '#8b9bb4'; // Tarde / Día nublado
+            viewport.innerHTML += '<div style="position:absolute; top:10px; right:20px; font-size:40px; z-index: 1;">⛅</div>';
         } else {
-            actionContainer.innerHTML = `
-                <div style="font-size: 0.6rem; color: var(--tier-gold, #ffd700); padding: 15px; border: 1px solid var(--tier-gold, #ffd700); background: rgba(255, 215, 0, 0.1);">
-                    🌟 Has alcanzado el pináculo de tu legado. Tu Ciudadela es eterna.
-                </div>
-            `;
+            viewport.classList.add('weather-rain');
+            viewport.innerHTML += '<div style="position:absolute; top:10px; right:20px; font-size:40px; z-index: 10;">🌧️</div>';
         }
-    },
 
-    upgrade() {
-        const currentLvl = StateManager.data.base.level;
-        const nextStage = this.STAGES[currentLvl + 1];
+        // 2. Terreno
+        const ground = document.createElement('div');
+        ground.style.position = 'absolute';
+        ground.style.bottom = '0';
+        ground.style.width = '100%';
+        ground.style.height = '40%';
+        ground.style.backgroundColor = '#2d4c1e';
+        ground.style.borderTop = '4px solid #1a3010';
+        viewport.appendChild(ground);
+
+        // 3. Estructura Central (Santuario)
+        let shrineIcon = '🛖'; // Default cabaña
+        if (heroLevel >= 25) shrineIcon = '🏰';
+        else if (heroLevel >= 10) shrineIcon = '🏯';
         
-        if (!nextStage) return;
+        viewport.innerHTML += `
+            <div style="position:absolute; bottom: 20%; left: 50%; transform: translateX(-50%); font-size: 80px; text-shadow: 0px 10px 0px rgba(0,0,0,0.5); z-index: 2;">
+                ${shrineIcon}
+            </div>
+        `;
 
-        if (Economy.spendGold(nextStage.cost)) {
-            StateManager.data.base.level += 1;
-            EventBus.emit('state:updated');
-            showToast("🏰 LEGADO EXPANDIDO", `Has construido: ${nextStage.name}!`);
-            playLevelUpSound();
-            this.render();
-            
-            // Actualizar Oro en el HUD
-            const goldText = document.getElementById('hud-gold-text');
-            if (goldText) goldText.textContent = `🪙 ${StateManager.data.economy.gold}`;
-        } else {
-            showToast("> FALTAN RECURSOS", "Necesitas más oro para esta construcción.", true);
+        // 4. Edificios de Atributos (Crecen si el atributo > 5)
+        if (stats && stats.fuerza && stats.fuerza.level >= 5) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 15%; left: 10%; font-size: 50px; text-shadow: 0px 5px 0px rgba(0,0,0,0.5); z-index: 3;" title="Zona de Entrenamiento (Fuerza ${stats.fuerza.level})">⚔️</div>`;
         }
+        if (stats && stats.sabiduria && stats.sabiduria.level >= 5) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 25%; right: 15%; font-size: 50px; text-shadow: 0px 5px 0px rgba(0,0,0,0.5); z-index: 1;" title="Torre de Sabiduría (Sab ${stats.sabiduria.level})">📚</div>`;
+        }
+        if (stats && stats.creatividad && stats.creatividad.level >= 5) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 10%; right: 30%; font-size: 40px; text-shadow: 0px 5px 0px rgba(0,0,0,0.5); z-index: 3;" title="Taller Creativo (Cre ${stats.creatividad.level})">🎨</div>`;
+        }
+        if (stats && stats.carisma && stats.carisma.level >= 5) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 10%; left: 30%; font-size: 40px; text-shadow: 0px 5px 0px rgba(0,0,0,0.5); z-index: 3;" title="Taberna (Car ${stats.carisma.level})">🍺</div>`;
+        }
+
+        // 5. Trofeos Permanentes
+        if (maxStreak >= 10) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 35%; left: 40%; font-size: 30px; filter: drop-shadow(0px 0px 10px gold); z-index: 1;" title="Estatua de Bronce (Racha 10)">🥉</div>`;
+        }
+        if (maxStreak >= 30) {
+            viewport.innerHTML += `<div style="position:absolute; bottom: 35%; right: 40%; font-size: 30px; filter: drop-shadow(0px 0px 10px gold); z-index: 1;" title="Estatua de Oro (Racha 30)">🏆</div>`;
+        }
+
+        // 6. Compañero Espiritual (Pet) V4
+        let petName = 'Chispa';
+        let petFallbackIcon = '✨';
+        let petImage = 'pet_spark.png';
+
+        if (heroLevel >= 15) {
+            petName = 'Dragón';
+            petFallbackIcon = '🐉';
+            petImage = 'pet_dragon.png';
+        } else if (heroLevel >= 5) {
+            petName = 'Lobo';
+            petFallbackIcon = '🐺';
+            petImage = 'pet_wolf.png';
+        }
+
+        viewport.innerHTML += `
+            <div class="base-pet" title="${petName} (Compañero Vinculado)" style="z-index: 5; text-align: center;">
+                <img src="assets/${petImage}" alt="${petName}" onerror="this.outerHTML='<span style=\\'font-size: 40px;\\'>${petFallbackIcon}</span>'" style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+        `;
     }
 };
+
+// Register events
+document.addEventListener('DOMContentLoaded', () => {
+    EventBus.on('state:updated', () => {
+        // Solo renderizar si el viewport está activo o existe
+        const viewport = document.getElementById('base-viewport');
+        if(viewport && viewport.parentElement.style.display !== 'none') {
+            BaseUI.renderV4();
+        }
+    });
+});

@@ -120,8 +120,61 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Press Start 2P', monospace; /* Default para preservar sistema antiguo */
     transition: all 0.2s ease;
+}
+
+/* ==========================================
+   TIPOGRAFÍA DUAL (FASE 1 - UX)
+   ========================================== */
+/* Elementos de texto largo y descriptivos usan Pixelify Sans para evitar sangrado visual */
+/* Elementos de texto largo y descriptivos usan Pixelify Sans para evitar sangrado visual */
+p, span, h1, h2, h3, h4, .panel-title, .modal-title, .btn-nav, .desc-text, .bio-text, .mission-info, .mission-desc, .toast-message, .chronicle-item, .base-desc-display, .edit-profile-box {
+    font-family: 'Pixelify Sans', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Forzamos que botones de acción, números importantes y stats se queden en 8-bits puro */
+.btn-pixel, .btn-menu, .hud-text, .streak-flame, #hud-gold-text, .pixel-input, .version-badge, #hud-level-text, .title-radar, .title-stats, .title-avatar, .title-missions {
+    font-family: 'Press Start 2P', monospace;
+}
+
+.btn-menu {
+    width: 100%;
+    text-align: left;
+    padding: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+.btn-menu:hover {
+    background: var(--shadow-glow);
+    padding-left: 20px;
+}
+.btn-menu.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Sprites and Icons */
+.sprite-icon {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+    vertical-align: middle;
+    margin-right: 12px;
+}
+.sprite-icon.small {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
 }
 
 body {
@@ -131,8 +184,25 @@ body {
     background-attachment: fixed;
     background-repeat: no-repeat;
     color: var(--text-color);
-    padding: 30px;
-    line-height: 1.8;
+    padding: 15px;
+    line-height: 1.6;
+    overflow: hidden; /* CERO SCROLL GLOBAL COMO UN JUEGO DE VERDAD */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* EFECTO SCANLINES (CRT / GBA SCREEN) */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+    z-index: 9999;
+    background-size: 100% 3px;
+    pointer-events: none;
 }
 
 /* ==== REPRODUCTOR SPOTIFY PIXEL ART RETRÁCTIL ==== */
@@ -183,7 +253,7 @@ body {
 }
 
 .music-badge-label {
-    font-size: 0.55rem;
+    font-size: 10px;
     color: var(--primary-color);
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
     font-family: 'Press Start 2P', monospace;
@@ -229,7 +299,7 @@ body {
 }
 
 .spotify-title {
-    font-size: 0.55rem;
+    font-size: 10px;
     color: var(--primary-color);
     font-family: 'Press Start 2P', monospace;
 }
@@ -290,7 +360,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 14px;
     border-radius: 0;
 }
 
@@ -314,7 +384,7 @@ body {
     color: var(--primary-color);
     border: none;
     width: 100%;
-    font-size: 0.5rem;
+    font-size: 8px;
     cursor: pointer;
     outline: none;
     font-family: 'Press Start 2P', monospace;
@@ -333,7 +403,7 @@ body {
 }
 
 .vol-icon {
-    font-size: 0.6rem;
+    font-size: 10px;
     color: var(--primary-color);
 }
 
@@ -390,7 +460,7 @@ input[type=range]::-moz-range-track {
     border: 3px solid var(--border-color);
     color: var(--text-color);
     padding: 18px;
-    font-size: 0.75rem;
+    font-size: 14px;
     font-family: 'Press Start 2P', monospace;
     cursor: pointer;
     border-radius: 0;
@@ -411,13 +481,18 @@ input[type=range]::-moz-range-track {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 15px;
-    max-width: 1100px;
-    margin: 0 auto 30px auto;
-    font-size: 0.55rem;
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
+    font-size: 10px;
     background-color: var(--panel-bg);
-    padding: 15px 25px;
-    border: 2px solid var(--border-color);
-    box-shadow: 4px 4px 0px var(--shadow-glow);
+    padding: 8px 16px;
+    border: 4px solid var(--border-color);
+    box-shadow: 
+        inset 0 0 0 3px var(--bg-color), 
+        inset 0 0 0 5px var(--primary-color),
+        8px 8px 0px rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
 }
 
 .nav-right {
@@ -429,7 +504,7 @@ input[type=range]::-moz-range-track {
 
 .version-badge {
     color: var(--primary-color);
-    font-size: 0.6rem;
+    font-size: 10px;
 }
 
 .btn-theme-trigger {
@@ -438,9 +513,9 @@ input[type=range]::-moz-range-track {
     color: var(--primary-color);
     padding: 10px 14px;
     cursor: pointer;
-    font-size: 0.55rem;
+    font-size: 10px;
     font-family: 'Press Start 2P', monospace;
-    box-shadow: 2px 2px 0px var(--shadow-glow);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.85);
     border-radius: 0;
 }
 
@@ -448,7 +523,7 @@ input[type=range]::-moz-range-track {
     background: var(--primary-color);
     color: var(--bg-color);
     transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0px var(--primary-color);
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.95);
 }
 
 .theme-grid-modal {
@@ -471,7 +546,7 @@ input[type=range]::-moz-range-track {
     color: var(--text-color);
     padding: 10px 12px;
     cursor: pointer;
-    font-size: 0.5rem;
+    font-size: 8px;
     border-radius: 0;
 }
 
@@ -526,7 +601,7 @@ header {
 }
 
 .window-title {
-    font-size: 0.5rem;
+    font-size: 8px;
     color: var(--text-dim);
     margin-left: 10px;
 }
@@ -537,14 +612,14 @@ header {
 }
 
 header h1 {
-    font-size: 1.2rem;
+    font-size: 18px;
     color: var(--primary-color);
     text-shadow: var(--text-shadow-val);
     margin-bottom: 12px;
 }
 
 header p {
-    font-size: 0.5rem;
+    font-size: 8px;
     color: var(--text-dim);
     text-shadow: var(--text-shadow-val);
 }
@@ -553,45 +628,104 @@ header p {
     content: var(--subtitle-text);
 }
 
-/* ==== DASHBOARD GRID ==== */
+/* ==== UNIFIED GAME WINDOW (V5) ==== */
 .dashboard {
+    flex: 1;
+    min-height: 0; /* Crucial para que los hijos puedan hacer overflow-y */
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1300px;
     margin: 0 auto;
-    padding-bottom: 40px;
+    background-color: var(--panel-bg);
+    border: 4px solid var(--border-color);
+    box-shadow: 
+        inset 0 0 0 3px var(--bg-color),
+        inset 0 0 0 5px var(--primary-color),
+        10px 10px 0px rgba(0,0,0,0.8);
 }
 
 @media (min-width: 900px) {
     .dashboard {
         display: grid;
-        grid-template-columns: 350px 1fr;
-        align-items: start;
+        grid-template-columns: 240px 1fr 280px;
+        align-items: stretch;
+        gap: 0;
     }
 }
 
-.sidebar,
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 15px; /* Ajuste para dar mas espacio al grid */
+    height: 100%;
+}
+
 .main-content {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 15px; /* Ajuste para dar mas espacio al grid */
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* Oscurecer un poco el area principal */
 }
 
-/* Panel Base */
-.panel {
-    background-color: var(--panel-bg);
+/* RESPONSIVE BORDERS FOR DASHBOARD COLUMNS */
+@media (min-width: 900px) {
+    .dashboard > .sidebar:first-child,
+    .dashboard > .main-content {
+        border-right: 4px solid var(--border-color);
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 899px) {
+    .dashboard > .sidebar:first-child,
+    .dashboard > .main-content {
+        border-bottom: 4px solid var(--border-color);
+        border-right: none;
+    }
+    .dashboard {
+        min-height: 100vh; /* En movil necesitamos mas de 100vh para scrollear todos los paneles apilados */
+    }
+    body {
+        overflow: auto; /* Permitir scroll global en movil */
+    }
+}
+
+/* CUSTOM RETRO SCROLLBAR */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+    border-left: 2px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
     border: 2px solid var(--border-color);
-    padding: 35px;
-    box-shadow: 4px 4px 0px var(--shadow-glow);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--streak-color);
+}
+
+/* Panel Base (Eliminando apariencia de Widget para integrarlos al Game Window) */
+.panel {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
     position: relative;
-    backdrop-filter: blur(5px);
 }
 
 .panel:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px var(--shadow-glow);
-    border-color: var(--primary-color);
+    transform: none;
+    box-shadow: none;
 }
 
 /* ==== EFECTO PERGAMINO ==== */
@@ -674,7 +808,7 @@ header p {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.85rem;
+    font-size: 14px;
     color: var(--primary-color);
     margin-bottom: 25px;
     border-bottom: 2px dashed var(--border-color);
@@ -725,12 +859,10 @@ header p {
 .avatar-box {
     width: 90px;
     height: 90px;
-    background-color: var(--bg-color);
-    border: 2px solid var(--primary-color);
+    background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     color: var(--text-color);
 }
 
@@ -741,19 +873,26 @@ header p {
 }
 
 .avatar-info h3 {
-    font-size: 0.75rem;
-    margin-bottom: 8px;
+    font-size: 18px;
+    margin-bottom: 4px;
     color: var(--primary-color);
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+}
+
+.avatar-info .equipped-title {
+    font-size: 14px;
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
 .avatar-info p {
-    font-size: 0.5rem;
+    font-size: 10px;
     color: var(--text-dim);
 }
 
 .bio-text {
-    font-size: 0.45rem;
+    font-size: 8px;
     color: var(--text-color);
     background-color: var(--bg-color);
     padding: 15px;
@@ -803,11 +942,14 @@ header p {
 
 .modal-content {
     background-color: var(--panel-bg);
-    border: 4px solid var(--primary-color);
-    padding: 30px;
+    border: 4px solid var(--border-color);
+    box-shadow: 
+        inset 0 0 0 3px var(--bg-color), 
+        inset 0 0 0 5px var(--primary-color),
+        12px 12px 0px rgba(0, 0, 0, 0.85); /* Sombra sólida */
+    padding: 25px;
     width: 100%;
     max-width: 550px;
-    box-shadow: 10px 10px 0px var(--shadow-glow);
     display: flex;
     flex-direction: column;
     max-height: 90vh;
@@ -825,7 +967,7 @@ header p {
 }
 
 .modal-title {
-    font-size: 0.75rem;
+    font-size: 14px;
     color: var(--primary-color);
 }
 
@@ -835,7 +977,7 @@ header p {
     padding: 8px 12px;
     cursor: pointer;
     color: var(--text-color);
-    font-size: 0.6rem;
+    font-size: 10px;
 }
 
 .btn-pixel-close:hover {
@@ -869,7 +1011,7 @@ header p {
 }
 
 .format-hint {
-    font-size: 0.55rem;
+    font-size: 10px;
     color: var(--text-dim);
     background-color: rgba(0, 0, 0, 0.3);
     padding: 12px;
@@ -880,29 +1022,34 @@ header p {
 
 .edit-profile-box label {
     color: var(--text-color);
-    font-size: 0.6rem;
+    font-size: 10px;
     margin-top: 15px;
 }
 
 .edit-profile-box input,
 .edit-profile-box textarea,
-.edit-profile-box select {
+.edit-profile-box select,
+.pixel-input {
     background: var(--bg-color);
-    border: 3px solid var(--border-color);
+    border: 2px solid var(--border-color);
     color: var(--text-color);
-    padding: 18px;
-    font-size: 0.75rem;
+    padding: 15px;
+    font-size: 14px;
     font-family: 'Press Start 2P', monospace;
     width: 100%;
     transition: all 0.2s ease;
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.4); /* Sombra interna dura */
+    border-radius: 0;
 }
 
 .edit-profile-box input:focus,
 .edit-profile-box textarea:focus,
-.edit-profile-box select:focus {
+.edit-profile-box select:focus,
+.pixel-input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 15px var(--shadow-glow);
+    background: rgba(0,0,0,0.8);
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.8);
 }
 
 .edit-profile-box input::placeholder,
@@ -940,7 +1087,7 @@ header p {
 }
 
 .drop-zone-text {
-    font-size: 0.6rem;
+    font-size: 10px;
     color: var(--primary-color);
     line-height: 1.6;
 }
@@ -952,7 +1099,7 @@ header p {
     border: 3px solid var(--border-color);
     padding: 18px;
     width: 100%;
-    font-size: 0.75rem;
+    font-size: 14px;
     cursor: pointer;
     text-transform: uppercase;
 }
@@ -967,7 +1114,7 @@ header p {
     color: #EF4444;
     border: 2px dashed #EF4444;
     padding: 15px;
-    font-size: 0.55rem;
+    font-size: 10px;
     cursor: pointer;
     text-transform: uppercase;
     font-family: 'Press Start 2P', monospace;
@@ -990,17 +1137,26 @@ header p {
 .stat-label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.5rem;
+    font-size: 10px;
     margin-bottom: 8px;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 700;
+}
+
+.stat-label span:last-child {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--primary-color);
 }
 
 .stat-bar-container {
-    background-color: var(--bg-color);
-    border: 2px solid var(--border-color);
-    height: 20px;
+    background-color: rgba(0,0,0,0.5);
+    border: 3px solid var(--border-color);
+    height: 18px;
     width: 100%;
     overflow: hidden;
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.6);
 }
 
 .stat-bar-fill {
@@ -1008,15 +1164,16 @@ header p {
     background-color: var(--primary-color);
     width: 0%;
     transition: width 0.4s ease;
-    box-shadow: 0 0 5px var(--primary-color);
+    box-shadow: inset 0px 4px 0px rgba(255,255,255,0.3);
 }
 
 /* Radar SVG */
 .radar-placeholder {
     width: 100%;
-    height: 260px;
-    background-color: var(--bg-color);
-    border: 2px dashed var(--border-color);
+    height: 180px;
+    background-color: rgba(0,0,0,0.5);
+    border: 3px solid var(--border-color);
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1044,27 +1201,56 @@ header p {
     font-family: 'Press Start 2P', monospace;
 }
 
-/* Misiones UI */
+/* Misiones UI (Quest Cards) */
 .mission-item {
-    background-color: var(--bg-color);
-    border: 2px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 3px solid var(--border-color);
     padding: 20px;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.65rem;
+    font-size: 10px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5); /* Sombra base */
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    border-radius: 0;
+    position: relative;
+    margin-left: 20px; /* Espacio para el puntero RPG */
+}
+
+/* PUNTERO RPG (CLÁSICO DE FINAL FANTASY/POKEMON) */
+.mission-item::before {
+    content: "▶";
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    font-size: 14px;
+    opacity: 0;
+    font-family: 'Press Start 2P', monospace;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.mission-item:hover::before {
+    opacity: 1;
+    animation: blinkPointer 0.8s infinite step-end;
+}
+
+@keyframes blinkPointer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .mission-item:hover {
-    transform: scale(1.02);
+    transform: translateY(-4px);
     border-color: var(--primary-color);
-    box-shadow: 3px 3px 0px var(--shadow-glow);
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.8);
 }
 
 .mission-info span {
     display: block;
-    font-size: 0.4rem;
+    font-size: 8px;
     color: var(--accent-color);
     margin-top: 8px;
 }
@@ -1098,7 +1284,7 @@ header p {
     color: var(--text-color);
     border: 2px solid var(--primary-color);
     padding: 15px 20px;
-    font-size: 0.55rem;
+    font-size: 10px;
     cursor: pointer;
     text-transform: uppercase;
 }
@@ -1118,7 +1304,7 @@ header p {
     border: none;
     color: #EF4444;
     cursor: pointer;
-    font-size: 0.5rem;
+    font-size: 8px;
     padding: 10px;
     margin-left: 5px;
     opacity: 0.5;
@@ -1158,14 +1344,14 @@ header p {
 
 .level-toast h2 {
     color: var(--accent-color);
-    font-size: 0.8rem;
+    font-size: 14px;
     margin-bottom: 10px;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
 .level-toast p {
     color: var(--text-color);
-    font-size: 0.5rem;
+    font-size: 8px;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 }
 
@@ -1200,13 +1386,13 @@ header p {
     }
 
     .version-badge {
-        font-size: 0.5rem;
+        font-size: 8px;
         margin-right: 0;
     }
 
     .btn-theme-trigger {
         padding: 12px 10px;
-        font-size: 0.55rem;
+        font-size: 10px;
     }
 
     /* El reproductor flotante se ajusta a la pantalla del móvil */
@@ -1230,7 +1416,7 @@ header p {
     }
 
     header h1 {
-        font-size: 0.85rem;
+        font-size: 14px;
         line-height: 1.5;
         letter-spacing: 0;
     }
@@ -1259,7 +1445,7 @@ header p {
     }
 
     .panel-title {
-        font-size: 0.65rem;
+        font-size: 10px;
         margin-bottom: 15px;
     }
 
@@ -1274,12 +1460,12 @@ header p {
     }
 
     .avatar-info h3 {
-        font-size: 0.65rem;
+        font-size: 10px;
     }
 
     .bio-text {
         padding: 10px;
-        font-size: 0.4rem;
+        font-size: 8px;
     }
 
     .btn-gear {
@@ -1332,18 +1518,297 @@ header p {
     .edit-profile-box select,
     .pixel-select {
         padding: 12px;
-        font-size: 0.55rem;
+        font-size: 10px;
         border-width: 2px;
     }
     
     .btn-save-modal {
         padding: 12px;
-        font-size: 0.6rem;
+        font-size: 10px;
         border-width: 2px;
     }
 
     .btn-pixel {
         padding: 12px 15px;
-        font-size: 0.45rem;
+        font-size: 8px;
+    }
+}
+
+/* ==== CRT MONITOR EFFECT ==== */
+body::after {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+    z-index: 9999;
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+    animation: crt-flicker 0.15s infinite;
+}
+
+@keyframes crt-flicker {
+    0% { opacity: 0.95; }
+    5% { opacity: 0.85; }
+    10% { opacity: 0.95; }
+    15% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+/* Viñeta sutil y curvatura de televisor viejo (CRT Bezel) */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.3) 80%, rgba(0,0,0,0.8) 100%);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,1), 0 0 0 100px rgba(0,0,0,1);
+    border-radius: 80px; /* Pantalla ovalada */
+    z-index: 9998;
+    pointer-events: none;
+}
+
+
+
+
+/* ==========================================
+   V4 UTILITY CLASSES & UI ENHANCEMENTS
+   ========================================== */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.gap-5 { gap: 5px; }
+.gap-10 { gap: 10px; }
+.gap-15 { gap: 15px; }
+.gap-20 { gap: 20px; }
+.mt-5 { margin-top: 5px; }
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+.mb-0 { margin-bottom: 0; }
+.mb-5 { margin-bottom: 5px; }
+.mb-15 { margin-bottom: 15px; }
+.mb-20 { margin-bottom: 20px; }
+.ml-10 { margin-left: 10px; }
+.ml-20 { margin-left: 20px; }
+.p-15 { padding: 15px; }
+.w-100 { width: 100%; }
+.text-center { text-align: center; }
+.text-dim { color: var(--text-dim); }
+.text-primary { color: var(--primary-color); }
+.font-bold { font-weight: bold; }
+.text-10 { font-size: 10px; }
+.text-sm { font-size: 0.85rem; }
+.text-md { font-size: 1rem; }
+.text-lg { font-size: 1.2rem; }
+.text-xl { font-size: 1.8rem; }
+.relative { position: relative; }
+
+.panel-header { padding: 15px 30px; border-bottom: 4px solid var(--border-color); }
+.border-gold { border-color: var(--tier-gold, #ffd700); }
+.color-gold { color: var(--tier-gold, #ffd700); }
+.color-streak { color: #00FFFF; }
+.color-shield { color: #A3BE8C; }
+.color-hp { color: var(--hp-color, #e74c3c); }
+
+/* CRT Overlay */
+.crt-overlay {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    z-index: 9998;
+}
+
+/* Mobile Bottom Navigation (JRPG Style) */
+@media (max-width: 899px) {
+    .dashboard > aside.sidebar:first-child {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 5px;
+        background: var(--panel-bg);
+        border-top: 4px solid var(--border-color);
+        border-right: none;
+        border-bottom: none;
+        z-index: 2000;
+        box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
+        gap: 0;
+    }
+    
+    .dashboard > aside.sidebar:first-child .btn-menu {
+        border: none !important;
+        padding: 10px 5px;
+        text-align: center;
+        font-size: 0.65rem;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+    
+    .dashboard > aside.sidebar:first-child .btn-menu img {
+        margin: 0 0 5px 0;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Ocultar elementos no críticos en nav inferior */
+    .mobile-hide { display: none !important; }
+    
+    .dashboard {
+        padding-bottom: 70px;
+        min-height: calc(100vh - 70px);
+    }
+    
+    .music-widget {
+        bottom: 80px; /* Elevar widget de música en móvil */
+    }
+}
+
+/* Efectos del clima de la base */
+.weather-sunny {
+    background-color: #87CEEB !important;
+    box-shadow: inset 0 0 50px rgba(255, 255, 0, 0.15) !important;
+}
+.weather-rain {
+    background-color: #4a5d6a !important;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6) !important;
+}
+.weather-rain::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="3" y2="5" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/></svg>');
+    background-size: 10px 10px;
+    animation: rainDrop 0.4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rainDrop {
+    0% { background-position: 0 0; }
+    100% { background-position: 10px 20px; }
+}
+
+/* Base Grid (Santuario) */
+.base-viewport {
+    width: 100%;
+    height: calc(100% - 50px);
+    background: #111;
+    position: relative;
+    border: 4px solid var(--border-color);
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.8);
+    overflow: hidden;
+    image-rendering: pixelated;
+}
+.base-item {
+    position: absolute;
+    transform: translate(-50%, 100%);
+    transition: all 0.3s ease;
+}
+.base-pet {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: floatUpPet 2.5s ease-in-out infinite alternate;
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5));
+}
+@keyframes floatUpPet {
+    0% { transform: translate(-50%, 0); }
+    100% { transform: translate(-50%, -15px); }
+}
+
+.shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.shop-item:hover {
+    background: rgba(0,0,0,0.4);
+    border-color: var(--primary-color);
+}
+
+/* ==========================================
+   V4 HOTFIX: TYPOGRAPHY & ALIGNMENT FIX
+   ========================================== */
+/* Evitar el 'fake bold' del navegador en fuentes Pixel Art (eso las estira y rompe) */
+h1, h2, h3, h4, h5, h6, 
+.btn-menu, .btn-pixel, .btn-nav, 
+#display-name, .font-bold {
+    font-weight: normal !important;
+}
+
+/* Reducir el tama�o gigantesco de los t�tulos en font pixelada */
+#display-name {
+    font-size: 1.2rem !important; /* En vez de 1.8rem que es masivo en 8-bits */
+    margin-bottom: 5px !important;
+}
+
+#hud-level-text, #hud-hp-text {
+    font-size: 1rem !important; 
+}
+
+/* Alineaci�n estricta del Top Nav */
+.top-nav.panel {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 15px 30px !important;
+    border-bottom: 4px solid var(--border-color) !important;
+    margin-bottom: 0 !important;
+    flex-wrap: wrap; /* Para m�viles */
+    gap: 15px;
+}
+
+.nav-section-left, .nav-section-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Contenedor de corazones de vida */
+#hud-hp-text {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+/* Ajustes M�viles estrictos para el Header */
+@media (max-width: 899px) {
+    .top-nav.panel {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 15px !important;
+    }
+    .nav-section-left, .nav-section-right {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .nav-section-right {
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 }

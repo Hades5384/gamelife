@@ -4,6 +4,18 @@ const HUD = {
         EventBus.on('state:updated', this.render.bind(this));
         EventBus.on('hero:hp_changed', this.animateHp.bind(this));
         
+        // Efectos visuales de Game Over (separados de la lógica en Hero.js)
+        EventBus.on('hero:death', () => {
+            document.body.classList.add('shake');
+            document.body.classList.add('flash-red');
+            playErrorSound();
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+                document.body.classList.remove('flash-red');
+                openModal('gameover-modal');
+            }, 500);
+        });
+        
         this.render();
     },
 
@@ -29,7 +41,20 @@ const HUD = {
             if (hpPct <= 25) hpFill.classList.add('low');
             else hpFill.classList.remove('low');
         }
-        if (hpText) hpText.textContent = `HP: ${hp}/${maxHp}`;
+        
+        if (hpText) {
+            const totalHearts = Math.ceil(maxHp / 10);
+            const currentHearts = Math.ceil(hp / 10);
+            let heartsHtml = '';
+            for(let i=0; i<totalHearts; i++) {
+                if (i < currentHearts) {
+                    heartsHtml += '<img src="assets/life.png" class="sprite-icon small" style="margin-right:2px; width:20px; height:20px;">';
+                } else {
+                    heartsHtml += '<img src="assets/life.png" class="sprite-icon small" style="margin-right:2px; width:20px; height:20px; filter: grayscale(100%) opacity(50%);">';
+                }
+            }
+            hpText.innerHTML = heartsHtml;
+        }
 
         const xp = StateManager.data.hero.xp;
         const nextXp = 100 + (StateManager.data.hero.level - 1) * 50;
@@ -40,9 +65,9 @@ const HUD = {
 
         if (levelText) levelText.textContent = `Nv. ${StateManager.data.hero.level}`;
 
-        if (streakText) streakText.textContent = `🔥 ${StateManager.data.streak.current}`;
-        if (shieldText) shieldText.textContent = `🛡️ ${StateManager.data.streak.shields}/2`;
-        if (goldText && StateManager.data.economy) goldText.textContent = `🪙 ${StateManager.data.economy.gold}`;
+        if (streakText) streakText.textContent = StateManager.data.streak.current;
+        if (shieldText) shieldText.textContent = `${StateManager.data.streak.shields}/2`;
+        if (goldText && StateManager.data.economy) goldText.textContent = StateManager.data.economy.gold;
         
         if (equippedTitle) {
             let t = StateManager.data.profile.equippedTitle;
