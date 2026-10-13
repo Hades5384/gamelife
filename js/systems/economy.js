@@ -71,30 +71,40 @@ const Economy = {
 
         // V4 Ethical Rule: Block leisure if HP < 50%
         if (currentHp < (maxHp * 0.5)) {
-            if (window.ToastSystem) {
-                ToastSystem.show('DENEGADO', 'Estás herido (HP < 50%). ¡Cumple tus deberes primero!', 'error');
-            } else {
-                alert('No puedes gastar oro en ocio si tu salud es menor al 50%.');
+            if (typeof showToast === 'function') {
+                showToast('> DENEGADO', 'Estás herido (HP < 50%). ¡Cumple tus deberes primero!', true);
             }
-            document.body.classList.add('flash-red');
-            setTimeout(() => document.body.classList.remove('flash-red'), 200);
+            if (window.FX) {
+                FX.flash('red');
+                FX.shake('medium');
+            }
+            if (window.AudioSys) AudioSys.playSFX('error');
             return;
         }
 
         if (this.canAfford(item.cost)) {
             this.spendGold(item.cost);
-            if (window.ToastSystem) {
-                ToastSystem.show('COMPRA EXITOSA', `Has adquirido: ${item.name}.`, 'success');
+            if (typeof showToast === 'function') {
+                showToast('> CANJE EXITOSO', `Has adquirido: ${item.name}`, false);
             }
-            if (window.AudioSystem && AudioSystem.playSound) {
-                AudioSystem.playSound('success'); // asume que hay un sonido de éxito
+            if (window.FX) {
+                FX.flash('gold');
+                FX.pixelBurst(window.innerWidth / 2, window.innerHeight / 2, ['#ffd700', '#ffffff', '#ffaa00'], 20);
+            }
+            if (window.AudioSys) {
+                AudioSys.playSFX('coin');
             }
         } else {
-            if (window.ToastSystem) {
-                ToastSystem.show('FONDOS INSUFICIENTES', `Necesitas ${item.cost} Oro.`, 'error');
+            if (typeof showToast === 'function') {
+                showToast('> FONDOS INSUFICIENTES', `Necesitas ${item.cost} Oro.`, true);
             }
-            document.body.classList.add('flash-red');
-            setTimeout(() => document.body.classList.remove('flash-red'), 200);
+            if (window.FX) {
+                FX.flash('red');
+                FX.shake('light');
+            }
+            if (window.AudioSys) {
+                AudioSys.playSFX('error');
+            }
         }
     }
 };

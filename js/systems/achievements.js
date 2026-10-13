@@ -86,8 +86,15 @@ const Achievements = {
             <p style="font-size:0.5rem; color:var(--text-color); margin-top:5px;">${ach.name} - ${ach.desc}</p>
         `;
         document.body.appendChild(toast);
-        playSuccessSound(); 
-        setTimeout(() => playSuccessSound(), 200);
+        if (window.AudioSys) AudioSys.playSFX('levelup');
+        else {
+            playSuccessSound(); 
+            setTimeout(() => playSuccessSound(), 200);
+        }
+        if (window.FX) {
+            FX.flash('gold');
+            FX.pixelBurst(window.innerWidth / 2, 70, ['#ffd700', '#ffffff', '#ffaa00', '#00e5ff'], 25);
+        }
 
         setTimeout(() => {
             toast.classList.remove('show');

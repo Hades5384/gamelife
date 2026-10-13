@@ -89,35 +89,194 @@ function playTone(frequency, type = 'square', duration = 0.1, vol = 0.15, slideF
     } catch (e) {}
 }
 
-function playClickSound() { playTone(800, 'square', 0.04, 0.05); } 
-function playModalOpenSound() { playTone(300, 'sine', 0.15, 0.1, 600); } 
-function playModalCloseSound() { playTone(600, 'sine', 0.15, 0.1, 300); } 
-function playSuccessSound() { 
-    if (!StateManager.data.settings.sound) return;
-    playTone(987.77, 'square', 0.1); 
-    setTimeout(() => playTone(1318.51, 'square', 0.3), 100); 
-}
-function playLevelUpSound() {
-    if (!StateManager.data.settings.sound) return;
-    const notes = [523.25, 659.25, 783.99, 1046.50]; 
-    notes.forEach((freq, index) => { setTimeout(() => playTone(freq, 'square', 0.15, 0.2), index * 120); });
-    setTimeout(() => playTone(1046.50, 'square', 0.6, 0.2), notes.length * 120);
-}
-function playErrorSound() {
-    if (!StateManager.data.settings.sound) return;
-    playTone(150, 'sawtooth', 0.2, 0.2);
-    setTimeout(() => playTone(150, 'sawtooth', 0.3, 0.2), 200);
-}
-function playTrashSound() {
-    if (!StateManager.data.settings.sound) return;
-    playTone(300, 'sawtooth', 0.1, 0.15);
-    setTimeout(() => playTone(200, 'sawtooth', 0.15, 0.15), 100);
+let lastHoverSoundTime = 0;
+
+function playHoverSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound || !audioCtx) return;
+    const now = Date.now();
+    if (now - lastHoverSoundTime < 65) return; // Debounce rápido
+    lastHoverSoundTime = now;
+    playTone(1100, 'triangle', 0.02, 0.025);
 }
 
+function playClickSound() { 
+    playTone(850, 'square', 0.04, 0.07); 
+} 
+
+function playModalOpenSound() { 
+    playTone(280, 'sine', 0.12, 0.1, 550); 
+} 
+
+function playModalCloseSound() { 
+    playTone(550, 'sine', 0.12, 0.1, 280); 
+} 
+
+function playSuccessSound() { 
+    if (!StateManager.data || !StateManager.data.settings.sound) return;
+    playTone(987.77, 'square', 0.09, 0.12); 
+    setTimeout(() => playTone(1318.51, 'square', 0.22, 0.14), 85); 
+}
+
+function playCoinSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound || !audioCtx) return;
+    try {
+        const now = audioCtx.currentTime;
+        // Tono 1: B5 (987.77 Hz)
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'square';
+        osc1.frequency.setValueAtTime(987.77, now);
+        gain1.gain.setValueAtTime(0.12, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        osc1.connect(gain1);
+        gain1.connect(sfxGain);
+        osc1.start(now);
+        osc1.stop(now + 0.07);
+
+        // Tono 2: E6 (1318.51 Hz) - el "ping" brillante característico
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(1318.51, now + 0.07);
+        gain2.gain.setValueAtTime(0.15, now + 0.07);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+        osc2.connect(gain2);
+        gain2.connect(sfxGain);
+        osc2.start(now + 0.07);
+        osc2.stop(now + 0.32);
+    } catch (e) {}
+}
+
+function playCritSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound || !audioCtx) return;
+    try {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // Ráfaga ascendente
+        notes.forEach((freq, idx) => {
+            setTimeout(() => playTone(freq, 'sawtooth', 0.09, 0.16), idx * 45);
+        });
+        setTimeout(() => playTone(1567.98, 'square', 0.35, 0.2), notes.length * 45); // Clímax brillante
+    } catch (e) {}
+}
+
+function playHitSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound || !audioCtx) return;
+    try {
+        const now = audioCtx.currentTime;
+        // Impacto crujiente retro
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.22);
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(sfxGain);
+        osc.start(now);
+        osc.stop(now + 0.22);
+
+        // Sub-golpe sordo
+        const subOsc = audioCtx.createOscillator();
+        const subGain = audioCtx.createGain();
+        subOsc.type = 'triangle';
+        subOsc.frequency.setValueAtTime(120, now);
+        subOsc.frequency.exponentialRampToValueAtTime(20, now + 0.25);
+        subGain.gain.setValueAtTime(0.28, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        subOsc.connect(subGain);
+        subGain.connect(sfxGain);
+        subOsc.start(now);
+        subOsc.stop(now + 0.25);
+    } catch (e) {}
+}
+
+function playStreakSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound) return;
+    const freqs = [440, 554.37, 659.25, 880];
+    freqs.forEach((freq, i) => {
+        setTimeout(() => playTone(freq, 'triangle', 0.12, 0.12), i * 65);
+    });
+}
+
+function playLevelUpSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound) return;
+    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; 
+    notes.forEach((freq, index) => { 
+        setTimeout(() => playTone(freq, 'square', 0.12, 0.18), index * 80); 
+    });
+    setTimeout(() => {
+        playTone(1046.50, 'square', 0.55, 0.22);
+        playTone(1567.98, 'triangle', 0.55, 0.18);
+    }, notes.length * 80);
+}
+
+function playErrorSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound) return;
+    playTone(160, 'sawtooth', 0.18, 0.18);
+    setTimeout(() => playTone(140, 'sawtooth', 0.25, 0.18), 160);
+}
+
+function playTrashSound() {
+    if (!StateManager.data || !StateManager.data.settings.sound) return;
+    playTone(320, 'sawtooth', 0.08, 0.14);
+    setTimeout(() => playTone(210, 'sawtooth', 0.12, 0.14), 85);
+}
+
+// Interfaz unificada de efectos de sonido
+window.AudioSys = {
+    playSFX(name) {
+        switch (name) {
+            case 'hit':
+            case 'damage':
+                playHitSound();
+                break;
+            case 'coin':
+            case 'gold':
+                playCoinSound();
+                break;
+            case 'crit':
+                playCritSound();
+                break;
+            case 'levelup':
+                playLevelUpSound();
+                break;
+            case 'streak':
+                playStreakSound();
+                break;
+            case 'click':
+                playClickSound();
+                break;
+            case 'hover':
+                playHoverSound();
+                break;
+            case 'success':
+                playSuccessSound();
+                break;
+            case 'error':
+                playErrorSound();
+                break;
+            case 'trash':
+                playTrashSound();
+                break;
+            default:
+                playClickSound();
+        }
+    }
+};
+
+// Eventos táctiles y auditivos en la UI
 document.addEventListener('mousedown', (e) => {
     if (StateManager.data && !StateManager.data.settings.sound) return;
-    if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.tagName === 'SELECT' || e.target.classList.contains('drop-zone')) {
+    if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.tagName === 'SELECT' || e.target.classList.contains('drop-zone') || e.target.classList.contains('cmd-btn')) {
         playClickSound();
+    }
+});
+
+document.addEventListener('mouseover', (e) => {
+    if (StateManager.data && !StateManager.data.settings.sound) return;
+    const target = e.target.closest('.cmd-btn, .btn-pixel, .btn-menu, .btn-nav, .tab-btn, .btn-pixel-icon');
+    if (target) {
+        playHoverSound();
     }
 });
 

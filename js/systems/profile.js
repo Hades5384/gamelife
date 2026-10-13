@@ -38,32 +38,70 @@ function updateProfileLive() {
     
     const name = nameInput.value || 'CREATOR';
     const bio = bioInput.value || '"Construyendo el cambio, forjando ideas y entrenando el cuerpo."';
-    const avatarUrl = avatarInput.value.trim();
+    const avatarUrl = avatarInput.value.trim().replace(/^["']+|["';]+$/g, '');
 
     const dispName = document.getElementById('display-name');
     const dispBio = document.getElementById('display-bio');
     if(dispName) dispName.textContent = name;
     if(dispBio) dispBio.textContent = bio;
 
+    // Si el usuario escribe una URL en el campo, actualizar la fuente activa
+    if (avatarUrl) {
+        currentAvatarData = avatarUrl;
+    } else if (currentAvatarData && !currentAvatarData.startsWith('data:')) {
+        currentAvatarData = '';
+    }
+
     const avatarBox = document.getElementById('avatar-preview');
-    const defaultAvatarSVG = `<svg viewBox="0 0 16 16" style="width:100%; height:100%; fill:var(--primary-color); shape-rendering: crispEdges; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color); background: var(--panel-bg);">
+    const modalPreview = document.getElementById('modal-avatar-preview');
+    
+    const defaultAvatarSVG = `<svg viewBox="0 0 16 16" width="100%" height="100%" style="fill:var(--primary-color); shape-rendering: crispEdges; background: var(--panel-bg); display:block;">
         <path d="M5 1h6v2h2v2h1v6h-1v2H9v-2H7v2H3v-2H2V5h1V3h2V1zm1 4v2H4v2h2V7h4v2h2V7h-2V5H6z"/>
     </svg>`;
 
-    if (avatarBox) {
-        if (currentAvatarData) {
-            avatarBox.innerHTML = `<img src="${currentAvatarData}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; image-rendering:pixelated; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color);">`;
-        } else if (avatarUrl) {
-            avatarBox.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; image-rendering:pixelated; border: 3px solid var(--border-color); box-shadow: inset 0 0 0 2px var(--bg-color);" onerror="this.onerror=null; this.parentNode.innerHTML='${defaultAvatarSVG}';">`;
-            currentAvatarData = avatarUrl;
+    const targetSrc = (currentAvatarData || avatarUrl || '').trim().replace(/^["']+|["';]+$/g, '');
+
+    function renderTo(container) {
+        if (!container) return;
+
+        if (targetSrc) {
+            const existingImg = container.querySelector('img');
+            if (existingImg && existingImg.src === targetSrc) {
+                return;
+            }
+
+            container.innerHTML = defaultAvatarSVG;
+
+            const img = new Image();
+            img.className = 'hud-avatar-img';
+            img.alt = 'Avatar';
+
+            img.onload = function() {
+                container.innerHTML = '';
+                container.appendChild(img);
+            };
+
+            img.onerror = function() {
+                container.innerHTML = defaultAvatarSVG;
+            };
+
+            img.src = targetSrc;
+
+            if (img.complete && img.naturalWidth > 0) {
+                container.innerHTML = '';
+                container.appendChild(img);
+            }
         } else {
-            avatarBox.innerHTML = defaultAvatarSVG;
+            container.innerHTML = defaultAvatarSVG;
         }
     }
 
+    renderTo(avatarBox);
+    renderTo(modalPreview);
+
     StateManager.data.profile.name = name;
     StateManager.data.profile.bio = bio;
-    StateManager.data.profile.avatar = currentAvatarData;
+    StateManager.data.profile.avatar = targetSrc;
     EventBus.emit('state:updated');
 }
 

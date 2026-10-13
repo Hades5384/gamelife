@@ -9,6 +9,8 @@ window.addEventListener('DOMContentLoaded', () => {
     Achievements.init();
     HUD.init();
     DayEngine.init();
+    if (window.Economy) Economy.init();
+    if (window.FX) FX.init();
     
     // 2. Restaurar UI Audio y Temas
     updateSoundButtonUI();
@@ -29,9 +31,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if(bioInput) bioInput.value = StateManager.data.profile.bio;
     
     if (StateManager.data.profile.avatar) {
-        currentAvatarData = StateManager.data.profile.avatar;
-        if (StateManager.data.profile.avatar.startsWith('http')) {
-            if(avatarInput) avatarInput.value = StateManager.data.profile.avatar;
+        const cleanAvatar = StateManager.data.profile.avatar.trim().replace(/^["']+|["';]+$/g, '');
+        currentAvatarData = cleanAvatar;
+        StateManager.data.profile.avatar = cleanAvatar;
+        if (!cleanAvatar.startsWith('data:')) {
+            if(avatarInput) avatarInput.value = cleanAvatar;
         }
     }
     

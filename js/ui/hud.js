@@ -6,14 +6,16 @@ const HUD = {
         
         // Efectos visuales de Game Over (separados de la lógica en Hero.js)
         EventBus.on('hero:death', () => {
-            document.body.classList.add('shake');
-            document.body.classList.add('flash-red');
-            playErrorSound();
+            if (window.FX) {
+                FX.shake('heavy');
+                FX.flash('red');
+            }
+            if (window.AudioSys) AudioSys.playSFX('hit');
+            else playErrorSound();
+            
             setTimeout(() => {
-                document.body.classList.remove('shake');
-                document.body.classList.remove('flash-red');
                 openModal('gameover-modal');
-            }, 500);
+            }, 550);
         });
         
         this.render();
