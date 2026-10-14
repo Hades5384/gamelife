@@ -53,7 +53,9 @@ const Economy = {
             
             itemDiv.innerHTML = `
                 <span>${item.icon} ${item.name}</span>
-                <span class="color-gold">${item.cost} 🪙</span>
+                <span class="color-gold" style="display:inline-flex; align-items:center; gap:4px;">
+                    ${item.cost} <img src="assets/coin.png" class="sprite-icon" style="width:12px; height:12px;" alt="Oro">
+                </span>
             `;
             
             itemDiv.onclick = () => this.buyItem(item.id);
@@ -114,3 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // wait a brief moment for state to be ready
     setTimeout(() => { if(window.Economy) Economy.init(); }, 500);
 });
+
+// Explicit window export for global accessibility
+window.Economy = Economy;
+

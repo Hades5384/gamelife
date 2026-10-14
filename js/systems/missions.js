@@ -53,7 +53,9 @@ function toggleCompletedMissions() {
 
 function createMissionCard(mission, isCompleted) {
     const statNames = { fuerza: "Fuerza", sabiduria: "Sabiduría", creatividad: "Creatividad", carisma: "Carisma" };
+    const statIcons = { fuerza: "assets/force.png", sabiduria: "assets/wisdom.png", creatividad: "assets/creativity.png", carisma: "assets/social.png" };
     const xpAmount = XP_REWARDS[mission.level] || 15;
+    const statIconSrc = statIcons[mission.stat] || 'assets/stats.png';
     
     const missionEl = document.createElement('div');
     missionEl.className = `mission-item ${isCompleted ? 'mission-completed' : ''}`;
@@ -64,8 +66,14 @@ function createMissionCard(mission, isCompleted) {
             <span style="font-family: 'Pixelify Sans', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--text-color);">${mission.name}</span>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
                 <span style="background:var(--border-color); color:var(--text-dim); padding:3px 6px; font-size:0.5rem; font-family:'Press Start 2P', monospace;">RANGO ${mission.level === 1 ? 'D' : mission.level === 2 ? 'C' : mission.level === 3 ? 'B' : 'S'}</span>
-                <span style="background:var(--primary-color); color:var(--bg-color); padding:3px 6px; font-size:0.5rem; font-family:'Press Start 2P', monospace;">+${xpAmount} XP ${statNames[mission.stat] ? statNames[mission.stat].toUpperCase() : 'EXP'}</span>
-                <span style="background:var(--tier-gold, #ffd700); color:#000; padding:3px 6px; font-size:0.5rem; font-family:'Press Start 2P', monospace;">+10 <i class="icon-pixel icon-gold" style="width:10px;height:10px;"></i></span>
+                <span style="background:var(--primary-color); color:var(--bg-color); padding:3px 6px; font-size:0.5rem; font-family:'Press Start 2P', monospace; display:inline-flex; align-items:center; gap:4px;">
+                    <img src="${statIconSrc}" class="sprite-icon" style="width:12px; height:12px;" alt="${statNames[mission.stat] || 'Stat'}">
+                    +${xpAmount} XP ${statNames[mission.stat] ? statNames[mission.stat].toUpperCase() : 'EXP'}
+                </span>
+                <span style="background:var(--tier-gold, #ffd700); color:#000; padding:3px 6px; font-size:0.5rem; font-family:'Press Start 2P', monospace; display:inline-flex; align-items:center; gap:4px;">
+                    <img src="assets/coin.png" class="sprite-icon" style="width:12px; height:12px;" alt="Oro">
+                    +10
+                </span>
             </div>
         </div>
         <div class="mission-actions" style="display:flex; gap:8px; align-items:center;">
@@ -99,7 +107,11 @@ function renderMissions() {
         const victoryBanner = document.createElement('div');
         victoryBanner.className = 'all-completed-banner';
         victoryBanner.innerHTML = `
-            <div class="banner-icon">★ ⚔️ ★</div>
+            <div class="banner-icon">
+                <img src="assets/star.png" class="sprite-icon" alt="Star" style="width: 22px; height: 22px;">
+                <img src="assets/swords.png" class="sprite-icon" alt="Sword" style="width: 26px; height: 26px;">
+                <img src="assets/star.png" class="sprite-icon" alt="Star" style="width: 22px; height: 22px;">
+            </div>
             <div class="banner-title">¡TABLÓN DESPEJADO!</div>
             <div class="banner-subtitle">Has cumplido todas tus misiones de hoy. Tu héroe descansa con honor.</div>
         `;
@@ -165,6 +177,15 @@ function completarMision(missionId, event = null) {
     if (isCrit) {
         goldReward *= 2;
     }
+
+    // Bonificación Pasiva de Oro por Evolución del Santuario
+    const sanctuaryLevel = StateManager.data?.base?.level || 1;
+    if (sanctuaryLevel === 2) {
+        goldReward = Math.round(goldReward * 1.10); // +10% en Tier 2
+    } else if (sanctuaryLevel >= 3) {
+        goldReward = Math.round(goldReward * 1.25); // +25% en Tier 3
+    }
+
     mission.lastGoldReward = goldReward;
 
     if (btn) {

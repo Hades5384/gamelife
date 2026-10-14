@@ -14,7 +14,7 @@ const StateManager = {
             schemaVersion: 3,
             meta: { createdAt: Utils.getTodayISO(), lastProcessedDate: Utils.getTodayISO(), lastSavedAt: Date.now(), appVersion: '3.0.0' },
             profile: { name: 'CREATOR', bio: '"Construyendo el cambio, forjando ideas y entrenando el cuerpo."', avatar: '', equippedTitle: '' },
-            settings: { theme: 'rpg-retro', backgrounds: {}, sound: true, volume: 0.3, bgmTrack: '1' },
+            settings: { theme: 'rpg-retro', backgrounds: {}, sound: true, volume: 0.3, bgmTrack: '1', hpStyle: 'hearts' },
             stats: { 
                 fuerza: { current: 0, max: 100, level: 1 },
                 sabiduria: { current: 0, max: 100, level: 1 },
@@ -45,6 +45,10 @@ const StateManager = {
             this.data = JSON.parse(saved);
             if (!this.data.economy) this.data.economy = { gold: 0 };
             if (!this.data.base) this.data.base = { level: 1 };
+            if (!this.data.settings) this.data.settings = {};
+            if (!this.data.settings.hpStyle) {
+                this.data.settings.hpStyle = localStorage.getItem('rpg_hp_style') || 'hearts';
+            }
         } else {
             this.data = this.getDefaultState();
         }
@@ -113,6 +117,7 @@ const StateManager = {
             if (localStorage.getItem('rpg_sound') !== null) this.data.settings.sound = localStorage.getItem('rpg_sound') !== 'false';
             if (localStorage.getItem('rpg_volume')) this.data.settings.volume = parseFloat(localStorage.getItem('rpg_volume'));
             if (localStorage.getItem('rpg_bgm_track')) this.data.settings.bgmTrack = localStorage.getItem('rpg_bgm_track');
+            if (localStorage.getItem('rpg_hp_style')) this.data.settings.hpStyle = localStorage.getItem('rpg_hp_style');
             
             // Fondos por tema
             const themes = ['terminal', 'synthwave', 'matrix', 'light-minimal', 'dark-minimal', 'rpg-retro'];
@@ -157,3 +162,5 @@ const StateManager = {
         }
     }
 };
+
+window.StateManager = StateManager;

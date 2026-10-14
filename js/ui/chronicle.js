@@ -68,26 +68,84 @@ const ChronicleUI = {
         const c = document.getElementById('tab-titles-content');
         if (!c) return;
         c.innerHTML = '';
-        
-        const btnUnequip = document.createElement('button');
-        btnUnequip.className = 'btn-pixel';
-        btnUnequip.style.display = 'block';
-        btnUnequip.style.width = '100%';
-        btnUnequip.style.marginBottom = '20px';
-        btnUnequip.style.backgroundColor = 'var(--bg-color)';
-        btnUnequip.style.textAlign = 'center';
-        btnUnequip.textContent = '❌ QUITAR TÍTULO (Ocultar)';
-        
-        if (StateManager.data.profile.equippedTitle === 'NONE') {
-            btnUnequip.style.borderColor = 'var(--hp-color)';
-            btnUnequip.style.color = 'var(--hp-color)';
-            btnUnequip.textContent = '❌ TÍTULO OCULTO';
+
+        const isHidden = StateManager.data.profile.equippedTitle === 'NONE';
+        const customEquipped = StateManager.data.profile.equippedTitle && StateManager.data.profile.equippedTitle !== 'NONE' ? StateManager.data.profile.equippedTitle : null;
+
+        let autoTitle = 'Novato';
+        const h = StateManager.data.hero.level;
+        if (h >= 50) autoTitle = 'Leyenda';
+        else if (h >= 35) autoTitle = 'Héroe';
+        else if (h >= 20) autoTitle = 'Veterano';
+        else if (h >= 10) autoTitle = 'Aventurero';
+        else if (h >= 5) autoTitle = 'Aprendiz';
+
+        const displayCurrent = isHidden ? 'NINGUNO (Oculto)' : (customEquipped || `${autoTitle} (Auto)`);
+
+        // Banner superior de estado y acción
+        const statusBox = document.createElement('div');
+        statusBox.style.cssText = 'padding: 12px 14px; margin-bottom: 18px; background: var(--bg-color); border: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;';
+
+        const textCol = document.createElement('div');
+        textCol.style.cssText = 'display: flex; flex-direction: column; gap: 4px;';
+        textCol.innerHTML = `
+            <span style="font-size: 0.55rem; color: var(--text-dim); font-family: 'Press Start 2P', monospace;">ESTADO EN EL HUD:</span>
+            <span style="font-size: 0.72rem; color: ${isHidden ? 'var(--color-danger)' : 'var(--primary-color)'}; font-family: 'Press Start 2P', monospace; display: flex; align-items: center; gap: 6px;">
+                ${isHidden ? '[X] OCULTO' : `<img src="assets/star.png" class="sprite-icon" style="width:14px; height:14px; vertical-align:middle;" alt="Star"> ${displayCurrent}`}
+            </span>
+        `;
+        statusBox.appendChild(textCol);
+
+        const actionsCol = document.createElement('div');
+        actionsCol.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'btn-pixel';
+        toggleBtn.style.cssText = 'padding: 8px 12px; font-size: 0.55rem; cursor: pointer;';
+
+        if (isHidden) {
+            toggleBtn.style.background = 'var(--primary-color)';
+            toggleBtn.style.color = 'var(--bg-color)';
+            toggleBtn.style.borderColor = 'var(--primary-color)';
+            toggleBtn.textContent = 'MOSTRAR TÍTULO';
+            toggleBtn.onclick = () => {
+                Titles.equip(''); // Restaura el título al automático
+                this.renderTitles();
+                playClickSound();
+                showToast('> TÍTULO', 'Título restaurado en el HUD.');
+            };
+        } else {
+            toggleBtn.style.background = 'transparent';
+            toggleBtn.style.color = 'var(--color-danger)';
+            toggleBtn.style.borderColor = 'var(--color-danger)';
+            toggleBtn.textContent = 'OCULTAR TÍTULO';
+            toggleBtn.onclick = () => {
+                Titles.equip('NONE'); // Oculta el título
+                this.renderTitles();
+                playClickSound();
+                showToast('> TÍTULO', 'Título ocultado del HUD.');
+            };
         }
-        btnUnequip.onclick = () => {
-            Titles.equip('NONE');
-            this.renderTitles();
-        };
-        c.appendChild(btnUnequip);
+        actionsCol.appendChild(toggleBtn);
+
+        if (!isHidden && customEquipped) {
+            const autoBtn = document.createElement('button');
+            autoBtn.type = 'button';
+            autoBtn.className = 'btn-pixel';
+            autoBtn.style.cssText = 'padding: 8px 10px; font-size: 0.55rem; background: transparent; color: var(--text-dim); border-color: var(--border-color); cursor: pointer;';
+            autoBtn.textContent = 'AUTO';
+            autoBtn.title = 'Volver al título por nivel de héroe';
+            autoBtn.onclick = () => {
+                Titles.equip('');
+                this.renderTitles();
+                playClickSound();
+            };
+            actionsCol.appendChild(autoBtn);
+        }
+
+        statusBox.appendChild(actionsCol);
+        c.appendChild(statusBox);
 
         let allTitles = [
             { id: 'Novato', name: 'Novato', desc: 'Alcanza el Nivel 1 de Héroe', check: s => s.hero.level >= 1 },
@@ -138,7 +196,10 @@ const ChronicleUI = {
             header.style.fontWeight = 'bold';
             header.style.fontSize = '0.65rem';
             header.style.color = unlocked ? 'var(--primary-color)' : 'var(--text-dim)';
-            header.innerHTML = (unlocked ? '✨ ' : '🔒 ') + displayName;
+            header.style.display = 'flex';
+            header.style.alignItems = 'center';
+            header.style.gap = '6px';
+            header.innerHTML = (unlocked ? '<img src="assets/star.png" class="sprite-icon small" style="width:13px; height:13px;" alt="Star"> ' : '🔒 ') + displayName;
             div.appendChild(header);
 
             const desc = document.createElement('div');
@@ -153,38 +214,49 @@ const ChronicleUI = {
                 btn.className = 'btn-pixel';
                 btn.style.marginTop = '10px';
                 btn.style.padding = '10px';
-                btn.style.fontSize = '0.45rem';
-                btn.textContent = 'EQUIPAR';
+                btn.style.fontSize = '0.5rem';
+                btn.type = 'button';
                 
                 let isEquipped = false;
-                if (StateManager.data.profile.equippedTitle === t.id) {
-                    isEquipped = true;
+                let isAuto = false;
+
+                if (!isHidden) {
+                    if (customEquipped === t.id) {
+                        isEquipped = true;
+                    } else if (!customEquipped && autoTitle === t.id) {
+                        isAuto = true;
+                    }
+                }
+
+                if (isEquipped) {
                     btn.style.borderColor = 'var(--primary-color)';
                     btn.style.backgroundColor = 'var(--primary-color)';
                     btn.style.color = 'var(--bg-color)';
-                    btn.textContent = 'EQUIPADO';
-                } else if (!StateManager.data.profile.equippedTitle || StateManager.data.profile.equippedTitle !== 'NONE') {
-                    let h = StateManager.data.hero.level;
-                    let autoT = 'Novato';
-                    if (h >= 50) autoT = 'Leyenda';
-                    else if (h >= 35) autoT = 'Héroe';
-                    else if (h >= 20) autoT = 'Veterano';
-                    else if (h >= 10) autoT = 'Aventurero';
-                    else if (h >= 5) autoT = 'Aprendiz';
-                    
-                    if (autoT === t.id && !StateManager.data.profile.equippedTitle) {
-                        isEquipped = true;
-                        btn.style.borderColor = 'var(--primary-color)';
-                        btn.style.backgroundColor = 'var(--bg-color)';
-                        btn.style.color = 'var(--primary-color)';
-                        btn.textContent = 'EQUIPADO (AUTO)';
-                    }
+                    btn.textContent = 'EQUIPADO (CLIC PARA QUITAR)';
+                    btn.onclick = () => {
+                        Titles.equip(''); // Vuelve a auto
+                        this.renderTitles();
+                        playClickSound();
+                    };
+                } else if (isAuto) {
+                    btn.style.borderColor = 'var(--primary-color)';
+                    btn.style.backgroundColor = 'var(--bg-color)';
+                    btn.style.color = 'var(--primary-color)';
+                    btn.textContent = 'EQUIPADO (AUTO)';
+                    btn.onclick = () => {
+                        showToast('> TÍTULO', 'Este título está activo automáticamente por tu nivel.');
+                    };
+                } else {
+                    btn.textContent = 'EQUIPAR';
+                    btn.style.backgroundColor = 'var(--bg-color)';
+                    btn.style.color = 'var(--text-color)';
+                    btn.style.borderColor = 'var(--border-color)';
+                    btn.onclick = () => {
+                        Titles.equip(t.id);
+                        this.renderTitles();
+                        playClickSound();
+                    };
                 }
-                
-                btn.onclick = () => {
-                    Titles.equip(t.id);
-                    this.renderTitles();
-                };
                 div.appendChild(btn);
             }
 

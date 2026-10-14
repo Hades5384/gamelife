@@ -360,23 +360,48 @@ body {
     gap: 6px;
     flex-grow: 1;
     max-width: 360px;
+    width: 100%;
 }
 .vitality-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    width: 100%;
 }
 .vitality-label {
     font-size: 0.75rem;
     letter-spacing: 1px;
     color: var(--text-color);
     text-shadow: var(--text-shadow-val);
+    font-family: var(--font-header);
 }
-.vitality-hearts {
+.vitality-display-slot {
+    width: 100%;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- ESTILO 1: CORAZONES --- */
+.vitality-hearts-container {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 2px;
+    width: 100%;
 }
+.vitality-heart-img {
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated;
+    margin-right: 2px;
+}
+.vitality-heart-img.empty {
+    filter: grayscale(100%) opacity(35%);
+}
+
+/* --- ESTILO 2: BARRA (ROJO PURO CON LEVE BRILLO ARRIBA, SIN TEXTURA) --- */
 .vitality-bar-container {
     width: 100%;
     height: 18px;
@@ -398,6 +423,201 @@ body {
 @keyframes hpFlash {
     0% { background: var(--hp-color); }
     100% { background: #b91c1c; filter: brightness(1.3); }
+}
+
+/* --- ESTILO 3: ELECTROCARDIOGRAMA CONTINUO --- */
+.re-ecg-screen {
+    width: 100%;
+    height: 26px;
+    background: #020f06;
+    border: 2px solid var(--border-color);
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.9), 2px 2px 0px rgba(0,0,0,0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 12px;
+    overflow: hidden;
+}
+.re-ecg-screen.status-fine {
+    border-color: #059669;
+}
+.re-ecg-screen.status-caution {
+    border-color: #D97706;
+    background: #120c02;
+}
+.re-ecg-screen.status-danger {
+    border-color: #DC2626;
+    background: #140202;
+    animation: reAlarmFlash 0.6s infinite alternate;
+}
+@keyframes reAlarmFlash {
+    0% { box-shadow: inset 0 0 4px #EF4444; }
+    100% { box-shadow: inset 0 0 12px #DC2626; }
+}
+
+.re-ecg-status-text {
+    font-family: var(--font-header);
+    font-size: 0.65rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    min-width: 60px;
+    z-index: 2;
+    user-select: none;
+}
+.re-ecg-status-text.fine {
+    color: #22C55E;
+    text-shadow: 0 0 5px rgba(34, 197, 94, 0.7);
+}
+.re-ecg-status-text.caution {
+    color: #F59E0B;
+    text-shadow: 0 0 5px rgba(245, 158, 11, 0.7);
+}
+.re-ecg-status-text.danger {
+    color: #EF4444;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.85);
+}
+.re-ecg-status-text.dead {
+    color: #6B7280;
+}
+
+.re-ecg-canvas {
+    flex: 1;
+    height: 20px;
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* Modal HP Styles Grid (Limpio) */
+.hp-style-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+.btn-hp-style-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px;
+    font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-weight: bold;
+    line-height: 1.2;
+    text-align: center;
+    border: 2px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.15s ease;
+}
+.btn-hp-style-opt:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+.btn-hp-style-opt.active {
+    border-color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-color);
+    box-shadow: 2px 2px 0px var(--shadow-glow);
+}
+.hp-opt-pixel-icon {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Selección de Tema con Estrella Pixel */
+.btn-theme-choice {
+    position: relative;
+    padding: 12px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+.theme-star-badge {
+    width: 16px;
+    height: 16px;
+    image-rendering: pixelated;
+    animation: starPulse 1.4s infinite alternate;
+}
+@keyframes starPulse {
+    0% { transform: scale(0.9) rotate(-4deg); }
+    100% { transform: scale(1.18) rotate(4deg); }
+}
+.btn-theme-choice.active-theme {
+    border-color: var(--primary-color) !important;
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: var(--primary-color) !important;
+    box-shadow: 2px 2px 0px var(--shadow-glow) !important;
+}
+
+/* Modal Celebración de Racha */
+.streak-modal-content {
+    max-width: 440px !important;
+    text-align: center;
+    border-color: #F59E0B !important;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.9), 0 0 25px rgba(245, 158, 11, 0.25) !important;
+}
+.streak-modal-body {
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.streak-flame-wrapper {
+    position: relative;
+    padding: 10px;
+}
+.streak-modal-fire {
+    width: 80px;
+    height: 80px;
+    image-rendering: pixelated;
+    animation: streakFlameBurn 1.2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.8));
+}
+@keyframes streakFlameBurn {
+    0% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.7)); }
+    50% { transform: scale(1.14) rotate(2deg); filter: drop-shadow(0 0 24px rgba(239, 68, 68, 0.95)) brightness(1.2); }
+    100% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.7)); }
+}
+.streak-modal-title {
+    font-family: var(--font-header);
+    font-size: 1.25rem;
+    color: #F59E0B;
+    text-shadow: 2px 2px 0px #000, 0 0 10px rgba(245, 158, 11, 0.6);
+    letter-spacing: 1px;
+    margin: 0;
+}
+.streak-modal-desc {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    white-space: pre-line;
+    margin: 0;
+}
+.btn-streak-continue {
+    width: 100%;
+    padding: 14px;
+    background: #F59E0B;
+    color: #000;
+    font-weight: bold;
+    border-color: #000;
+    box-shadow: 4px 4px 0px #000;
+    cursor: pointer;
+}
+.btn-streak-continue:hover {
+    background: #FBBF24;
+    transform: translateY(-2px);
 }
 
 /* 3.3 TREASURY & CONTROLS (DERECHA) */
@@ -791,6 +1011,10 @@ body {
     margin-bottom: 12px;
 }
 .all-completed-banner .banner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     font-size: 1.4rem;
     color: var(--tier-gold);
     animation: flamePulse 1.5s infinite alternate;
@@ -868,54 +1092,197 @@ body {
 }
 
 /* SANTUARIO DEL HEROE VIEW */
+/* SANTUARIO RPG CANVAS ENGINE */
 .sanctuary-stage-box {
     width: 100%;
-    height: calc(100% - 20px);
-    background: #000;
+    height: 100%;
+    min-height: 420px;
+    background: #0d0d15;
     position: relative;
     border: 4px solid var(--border-color);
-    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.9);
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.8);
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+.sanctuary-stage-box.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.sanctuary-canvas {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+    cursor: crosshair;
+}
+/* Fullscreen Floating Exit Button */
+.sanctuary-fs-close {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.88);
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #000;
+    z-index: 50;
+    transition: all 0.15s ease;
+}
+.sanctuary-stage-box.fullscreen .sanctuary-fs-close {
+    display: block;
+}
+.sanctuary-fs-close:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
 }
 
-/* EFECTOS DEL CLIMA DE LA BASE */
-.weather-sunny {
-    background-color: #87CEEB !important;
-    box-shadow: inset 0 0 50px rgba(255, 255, 0, 0.15) !important;
-}
-.weather-rain {
-    background-color: #4a5d6a !important;
-    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6) !important;
-}
-.weather-rain::after {
-    content: '';
+.sanctuary-controls-help {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="3" y2="5" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/></svg>');
-    background-size: 10px 10px;
-    animation: rainDrop 0.4s linear infinite;
-    pointer-events: none;
-}
-@keyframes rainDrop {
-    0% { background-position: 0 0; }
-    100% { background-position: 10px 20px; }
-}
-
-.base-pet {
-    position: absolute;
-    bottom: 5%;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    animation: floatUpPet 2.5s ease-in-out infinite alternate;
-    width: 64px;
-    height: 64px;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5));
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid var(--border-color);
+    color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    padding: 4px 10px;
+    pointer-events: none;
+    z-index: 10;
+    white-space: nowrap;
+    text-align: center;
+    opacity: 0.75;
 }
-@keyframes floatUpPet {
-    0% { transform: translate(-50%, 0); }
-    100% { transform: translate(-50%, -15px); }
+
+/* Virtual D-Pad for Mobile & Touch (Hidden on Desktop to prevent clutter) */
+.sanctuary-dpad {
+    display: none;
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 84px;
+    height: 84px;
+    z-index: 15;
+    grid-template-columns: repeat(3, 28px);
+    grid-template-rows: repeat(3, 28px);
+    opacity: 0.75;
+    transition: opacity 0.2s;
+    user-select: none;
+}
+.sanctuary-dpad:hover { opacity: 1; }
+.dpad-btn {
+    background: rgba(0, 0, 0, 0.88);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+}
+.dpad-btn:active { background: var(--primary-color); color: var(--bg-color); }
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 3; }
+
+.sanctuary-action-btn {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 3px solid var(--border-color);
+    color: var(--bg-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.8);
+    z-index: 15;
+    opacity: 0.85;
+    transition: all 0.15s;
+    user-select: none;
+}
+.sanctuary-action-btn:hover { opacity: 1; transform: scale(1.08); }
+.sanctuary-action-btn:active { transform: scale(0.95); }
+
+/* Only show on-screen D-pad and Action button on touch devices or small screens */
+@media (max-width: 899px), (hover: none) and (pointer: coarse) {
+    .sanctuary-dpad {
+        display: grid;
+    }
+    .sanctuary-action-btn {
+        display: flex;
+    }
+}
+/* Dialogue Box Overlay */
+.sanctuary-dialogue-box {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    background: var(--panel-bg);
+    border: 3px solid var(--border-color);
+    box-shadow: 
+        inset 0 0 0 2px var(--bg-color), 
+        inset 0 0 0 4px var(--primary-color),
+        4px 4px 0px rgba(0, 0, 0, 0.85);
+    padding: 12px 16px;
+    z-index: 25;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    animation: toastSlide 0.2s ease-out;
+}
+.sanctuary-dialogue-box.active {
+    display: flex;
+}
+.sanctuary-dialogue-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    color: var(--primary-color);
+}
+.sanctuary-dialogue-text {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+.sanctuary-dialogue-close {
+    align-self: flex-end;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    margin-top: 4px;
 }
 
 /* ==========================================
@@ -1059,6 +1426,9 @@ body {
     z-index: 5000;
     padding: 20px;
 }
+#confirm-modal {
+    z-index: 7500;
+}
 .modal-overlay.active {
     display: flex;
 }
@@ -1184,7 +1554,7 @@ body {
     border: 3px solid var(--border-color);
     box-shadow: 6px 6px 0px var(--shadow-glow);
     padding: 12px;
-    width: 240px;
+    width: 250px;
 }
 .music-widget.is-open .music-card {
     display: block;
@@ -1211,10 +1581,79 @@ body {
     background: var(--bg-color);
     border: 2px solid var(--border-color);
     color: var(--text-color);
-    padding: 6px;
+    padding: 6px 8px;
     font-size: 0.75rem;
     font-family: var(--font-body);
     width: 100%;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+.pixel-select-mini:hover {
+    border-color: var(--primary-color);
+}
+.player-volume-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-color);
+}
+.volume-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+.pixel-range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 8px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0 !important;
+    outline: none;
+    cursor: pointer;
+    box-shadow: inset 1px 1px 0px rgba(0,0,0,0.6);
+}
+.pixel-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 14px;
+    background: var(--primary-color);
+    border: 1px solid #000;
+    border-radius: 0 !important;
+    box-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.pixel-range-slider::-webkit-slider-thumb:hover {
+    background: var(--accent-color);
+}
+.pixel-range-slider::-moz-range-thumb {
+    width: 12px;
+    height: 14px;
+    background: var(--primary-color);
+    border: 1px solid #000;
+    border-radius: 0 !important;
+    box-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.pixel-range-slider::-moz-range-thumb:hover {
+    background: var(--accent-color);
+}
+.volume-value-text {
+    font-family: var(--font-header);
+    font-size: 0.6rem;
+    color: var(--primary-color);
+    min-width: 32px;
+    text-align: right;
+    user-select: none;
 }
 
 /* ==========================================
@@ -1393,4 +1832,144 @@ body {
 .fx-flash-overlay.green { background-color: rgba(16, 185, 129, 0.25); opacity: 1; transition: opacity 0.05s ease-in; }
 .fx-flash-overlay.gold { background-color: rgba(255, 215, 0, 0.3); opacity: 1; transition: opacity 0.05s ease-in; }
 .fx-flash-overlay.white { background-color: rgba(255, 255, 255, 0.45); opacity: 1; transition: opacity 0.05s ease-in; }
+
+/* ==========================================
+   12. MODAL MEJORAS DEL SANTUARIO
+   ========================================== */
+.sanctuary-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: var(--font-body);
+}
+
+.sanctuary-tier-card {
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sanctuary-tier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.sanctuary-tier-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sanctuary-tier-level-badge {
+    background: var(--panel-sub);
+    border: 1px solid var(--border-color);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    padding: 3px 6px;
+    color: var(--tier-gold, #ffd700);
+}
+
+.sanctuary-tier-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+.sanctuary-req-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 4px 0;
+}
+
+.sanctuary-req-item {
+    background: var(--panel-sub);
+    border: 1px solid var(--border-color);
+    padding: 8px 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.75rem;
+}
+.sanctuary-req-item.met {
+    border-color: var(--color-emerald, #10b981);
+    color: var(--color-emerald, #10b981);
+}
+.sanctuary-req-item.unmet {
+    border-color: var(--color-danger, #ef4444);
+    color: var(--color-danger, #ef4444);
+}
+.sanctuary-req-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+}
+.sanctuary-req-val {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+}
+
+.sanctuary-perks-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    color: var(--tier-gold, #ffd700);
+    margin-top: 4px;
+}
+
+.sanctuary-perks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sanctuary-perk-item {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.sanctuary-perk-item::before {
+    content: "◆";
+    color: var(--primary-color);
+    font-size: 0.7rem;
+}
+
+.btn-upgrade-sanctuary {
+    width: 100%;
+    padding: 14px;
+    font-size: 0.65rem;
+    font-family: 'Press Start 2P', monospace;
+    background: var(--tier-gold, #ffd700);
+    color: #000;
+    border-color: #fff;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px rgba(0,0,0,0.8);
+    transition: all 0.15s ease;
+}
+.btn-upgrade-sanctuary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 0px rgba(0,0,0,0.9);
+}
+.btn-upgrade-sanctuary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--panel-sub);
+    color: var(--text-dim);
+    border-color: var(--border-color);
+    transform: none;
+    box-shadow: none;
+}
 

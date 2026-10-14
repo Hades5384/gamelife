@@ -2,9 +2,30 @@
 let currentAvatarData = '';
 let currentBgData = '';
 
+function updateThemeButtonsUI(activeTheme) {
+    document.querySelectorAll('.btn-theme-choice').forEach(btn => {
+        const t = btn.getAttribute('data-theme');
+        const existingStar = btn.querySelector('.theme-star-badge');
+        if (existingStar) existingStar.remove();
+
+        if (t === activeTheme) {
+            btn.classList.add('active-theme');
+            const star = document.createElement('img');
+            star.src = 'assets/star.png';
+            star.className = 'theme-star-badge';
+            star.alt = 'Seleccionado';
+            btn.prepend(star);
+        } else {
+            btn.classList.remove('active-theme');
+        }
+    });
+}
+
 function setTheme(themeName) {
     document.documentElement.setAttribute('data-theme', themeName);
     StateManager.data.settings.theme = themeName;
+    try { localStorage.setItem('selected_theme', themeName); } catch(e) {}
+    updateThemeButtonsUI(themeName);
     EventBus.emit('state:updated');
     
     const savedBg = StateManager.data.settings.backgrounds[themeName];

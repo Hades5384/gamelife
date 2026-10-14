@@ -16,6 +16,11 @@ window.addEventListener('DOMContentLoaded', () => {
     updateSoundButtonUI();
     const selectBGM = document.getElementById('bgm-select');
     if(selectBGM) selectBGM.value = StateManager.data.settings.bgmTrack;
+    const volSlider = document.getElementById('volume-slider');
+    const savedVol = (StateManager.data && StateManager.data.settings.volume !== undefined) ? StateManager.data.settings.volume : 0.3;
+    if (volSlider) volSlider.value = savedVol;
+    const volLabel = document.getElementById('volume-label');
+    if (volLabel) volLabel.textContent = `${Math.round(savedVol * 100)}%`;
 
     setupDropZone('avatar-drop-zone', 'input-file', handleFileSelect);
     setupDropZone('bg-drop-zone', 'input-bg-file', handleBgFileSelect);

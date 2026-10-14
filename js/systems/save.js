@@ -9,6 +9,7 @@ const SaveSystem = {
     },
     
     restoreSavePoint() {
+        closeModal('save-modal');
         showConfirm("Esto sobreescribirá tu estado actual. ¿Continuar?", () => {
             const b64 = localStorage.getItem('gamelife_savepoint');
             if (b64) {
@@ -67,6 +68,7 @@ const SaveSystem = {
                 }
                 
                 if (validData) {
+                    closeModal('save-modal');
                     showConfirm("Importar borrará el progreso actual. ¿Continuar?", () => {
                         StateManager.data = validData;
                         StateManager.save();
@@ -81,6 +83,7 @@ const SaveSystem = {
     },
     
     newGame() {
+        closeModal('save-modal');
         showConfirm("¡ATENCIÓN! Se borrará TODO el progreso. ¿Estás seguro?", () => {
             StateManager.data = StateManager.getDefaultState();
             StateManager.save();
