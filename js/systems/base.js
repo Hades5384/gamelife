@@ -422,15 +422,6 @@ const BaseUI = {
             `;
         }
 
-        // Acceso rápido de pruebas y balance
-        html += `
-            <div style="margin-top: 12px; display: flex; gap: 8px;">
-                <button class="btn-pixel" style="flex: 1; padding: 8px 10px; font-size: 0.58rem; background: rgba(255, 215, 0, 0.18); border-color: var(--tier-gold, #ffd700); color: var(--tier-gold, #ffd700); cursor: pointer;" onclick="BaseUI.testMax()" title="Maxear nivel, misiones y oro para probar la evolución">
-                    ⚡ MAXEAR RECURSOS Y STATS (MODO PRUEBA)
-                </button>
-            </div>
-        `;
-
         body.innerHTML = html;
     },
 
@@ -472,108 +463,6 @@ const BaseUI = {
         this.updateLocationBadge();
         this.renderUpgradeModal();
         EventBus.emit('state:updated');
-    },
-
-    // ------------------------------------------------------------------------
-    // TESTING SUITE (PROBAR EVOLUCIÓN Y STATS)
-    // ------------------------------------------------------------------------
-    testMax() {
-        try {
-            if (typeof StateManager === 'undefined' || !StateManager.data) return;
-
-            // 1. Hero
-            if (!StateManager.data.hero) {
-                StateManager.data.hero = { level: 1, xp: 0, totalXpEarned: 0, hp: 100, maxHp: 100, deaths: 0 };
-            }
-            StateManager.data.hero.level = 25;
-            StateManager.data.hero.xp = 0;
-            StateManager.data.hero.hp = 100;
-            StateManager.data.hero.maxHp = 100;
-            StateManager.data.hero.totalXpEarned = 25000;
-
-            // 2. Economy / Gold (3000 Oro de sobra para Tier 2 [150] y Tier 3 [350])
-            if (!StateManager.data.economy) StateManager.data.economy = { gold: 0 };
-            StateManager.data.economy.gold = 3000;
-
-            // 3. Counters (50 misiones cumple con creces los 30 de Tier 3)
-            if (!StateManager.data.counters) {
-                StateManager.data.counters = { missionsTotal: 0, perStat: {}, perLevel: {}, perfectDays: 0 };
-            }
-            StateManager.data.counters.missionsTotal = 50;
-            StateManager.data.counters.perfectDays = 25;
-            StateManager.data.counters.perStat = { fuerza: 15, sabiduria: 15, creatividad: 10, carisma: 10 };
-
-            // 4. Stats
-            if (!StateManager.data.stats) StateManager.data.stats = {};
-            ['fuerza', 'sabiduria', 'creatividad', 'carisma'].forEach(stat => {
-                StateManager.data.stats[stat] = {
-                    current: 100,
-                    max: 100,
-                    level: 15
-                };
-            });
-
-            // 5. Streak
-            if (!StateManager.data.streak) {
-                StateManager.data.streak = { current: 0, best: 0, shields: 0 };
-            }
-            StateManager.data.streak.current = 14;
-            StateManager.data.streak.shields = 2;
-
-            // 6. Base tier
-            if (!StateManager.data.base) {
-                StateManager.data.base = { level: 1 };
-            }
-
-            // Guardado síncrono e instantáneo en LocalStorage
-            try {
-                StateManager.save();
-            } catch(e) {
-                console.warn("Autosave test error", e);
-            }
-
-            // Refrescar barras y UI
-            if (typeof renderStats === 'function') renderStats();
-            if (typeof renderMissions === 'function') renderMissions();
-            if (typeof HUD !== 'undefined' && typeof HUD.render === 'function') HUD.render();
-
-            this.updateLocationBadge();
-            this.updateWeather();
-            this.renderUpgradeModal();
-
-            // Disparar eventos
-            if (typeof EventBus !== 'undefined') {
-                EventBus.emit('state:updated');
-                EventBus.emit('hero:xp_changed');
-            }
-
-            // Efectos y notificación
-            if (typeof playLevelUpSound === 'function') playLevelUpSound();
-            if (typeof FX !== 'undefined') {
-                FX.flash('gold');
-                FX.shake('med');
-                FX.pixelBurst(window.innerWidth / 2, window.innerHeight / 2, ['#ffd700', '#ffffff', '#ff9900', '#2ecc71'], 35);
-            }
-
-            if (typeof showToast === 'function') {
-                showToast("⚡ STATS MAXEADAS (TEST)", "Nivel 25 • 3.000 Oro • 50 Misiones. ¡Listo para evolucionar!");
-            }
-        } catch(err) {
-            console.error("Error en BaseUI.testMax:", err);
-        }
-    },
-
-    setTier(tier) {
-        if (typeof StateManager === 'undefined' || !StateManager.data) return;
-        if (!StateManager.data.base) StateManager.data.base = { level: 1 };
-        StateManager.data.base.level = Math.max(1, Math.min(3, tier));
-        try { StateManager.save(); } catch(e) {}
-        this.updateLocationBadge();
-        this.renderUpgradeModal();
-        EventBus.emit('state:updated');
-        if (typeof showToast === 'function') {
-            showToast("SANTUARIO MODIFICADO", `Base fijada en Nivel ${tier}.`);
-        }
     },
 
     // ------------------------------------------------------------------------
@@ -2772,4 +2661,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Explicit window export for global accessibility
 window.BaseUI = BaseUI;
-window.testMax = () => BaseUI.testMax();

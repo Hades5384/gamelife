@@ -20,6 +20,13 @@ const Titles = {
                 titles.push(ach.title);
             }
         }
+
+        // Shop / Prestige titles
+        if (StateManager.data.economy && Array.isArray(StateManager.data.economy.unlockedTitles)) {
+            StateManager.data.economy.unlockedTitles.forEach(t => {
+                if (!titles.includes(t)) titles.push(t);
+            });
+        }
         
         return titles;
     },

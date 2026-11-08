@@ -126,17 +126,71 @@ function updateProfileLive() {
     EventBus.emit('state:updated');
 }
 
+function compressImageFile(file, maxDimension, quality, callback) {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+        showToast("> ERROR", "Formato de archivo no válido.", true);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            let width = img.naturalWidth || img.width;
+            let height = img.naturalHeight || img.height;
+
+            if (width > maxDimension || height > maxDimension) {
+                if (width > height) {
+                    height = Math.round((height * maxDimension) / width);
+                    width = maxDimension;
+                } else {
+                    width = Math.round((width * maxDimension) / height);
+                    height = maxDimension;
+                }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+
+            try {
+                let compressed = canvas.toDataURL('image/webp', quality);
+                if (!compressed.startsWith('data:image/webp')) {
+                    compressed = canvas.toDataURL('image/jpeg', quality);
+                }
+                callback(compressed);
+            } catch (err) {
+                console.warn("Fallo al exportar canvas comprimido, usando origen", err);
+                callback(e.target.result);
+            }
+        };
+        img.onerror = function() {
+            showToast("> ERROR", "No se pudo decodificar la imagen.", true);
+        };
+        img.src = e.target.result;
+    };
+    reader.onerror = function() {
+        showToast("> ERROR", "Error al leer el archivo.", true);
+    };
+    reader.readAsDataURL(file);
+}
+
 function handleFileSelect(event) {
     const file = event.target.files ? event.target.files[0] : null;
     if (!file) return;
-    document.getElementById('file-label').innerHTML = `✓ Avatar cargado`;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentAvatarData = e.target.result;
-        document.getElementById('input-avatar').value = '';
+    document.getElementById('file-label').innerHTML = `✓ Procesando avatar...`;
+    compressImageFile(file, 256, 0.85, (compressedData) => {
+        currentAvatarData = compressedData;
+        const avatarInput = document.getElementById('input-avatar');
+        if (avatarInput) avatarInput.value = '';
+        document.getElementById('file-label').innerHTML = `✓ Avatar optimizado`;
         updateProfileLive();
-    };
-    reader.readAsDataURL(file);
+        showToast("> AVATAR GUARDADO", "Imagen ajustada y comprimida para tu perfil.");
+    });
 }
 
 function updateBackgroundLive() {
@@ -164,14 +218,15 @@ function updateBackgroundLive() {
 function handleBgFileSelect(event) {
     const file = event.target.files ? event.target.files[0] : null;
     if (!file) return;
-    document.getElementById('bg-file-label').innerHTML = `✓ Fondo cargado`;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentBgData = e.target.result;
-        document.getElementById('input-bg-url').value = '';
+    document.getElementById('bg-file-label').innerHTML = `✓ Procesando fondo...`;
+    compressImageFile(file, 1280, 0.75, (compressedData) => {
+        currentBgData = compressedData;
+        const bgInput = document.getElementById('input-bg-url');
+        if (bgInput) bgInput.value = '';
+        document.getElementById('bg-file-label').innerHTML = `✓ Fondo optimizado`;
         updateBackgroundLive();
-    };
-    reader.readAsDataURL(file);
+        showToast("> FONDO GUARDADO", "Imagen de fondo optimizada y aplicada.");
+    });
 }
 
 function clearBackground() {
@@ -224,23 +279,27 @@ window.addEventListener('paste', (event) => {
     for (let item of items) {
         if (item.type.indexOf('image') === 0) {
             const blob = item.getAsFile();
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (profileActive) {
-                    currentAvatarData = e.target.result;
-                    document.getElementById('file-label').innerHTML = '✓ Avatar pegado';
-                    document.getElementById('input-avatar').value = '';
+            if (profileActive) {
+                document.getElementById('file-label').innerHTML = '✓ Procesando avatar pegado...';
+                compressImageFile(blob, 256, 0.85, (compressed) => {
+                    currentAvatarData = compressed;
+                    document.getElementById('file-label').innerHTML = '✓ Avatar pegado y optimizado';
+                    const avatarInput = document.getElementById('input-avatar');
+                    if (avatarInput) avatarInput.value = '';
                     updateProfileLive();
                     showToast("> SISTEMA", "Avatar actualizado (Ctrl+V) 📋✨");
-                } else if (bgActive) {
-                    currentBgData = e.target.result;
-                    document.getElementById('bg-file-label').innerHTML = '✓ Fondo pegado';
-                    document.getElementById('input-bg-url').value = '';
+                });
+            } else if (bgActive) {
+                document.getElementById('bg-file-label').innerHTML = '✓ Procesando fondo pegado...';
+                compressImageFile(blob, 1280, 0.75, (compressed) => {
+                    currentBgData = compressed;
+                    document.getElementById('bg-file-label').innerHTML = '✓ Fondo pegado y optimizado';
+                    const bgInput = document.getElementById('input-bg-url');
+                    if (bgInput) bgInput.value = '';
                     updateBackgroundLive();
                     showToast("> SISTEMA", "Fondo actualizado (Ctrl+V) 📋✨");
-                }
-            };
-            reader.readAsDataURL(blob);
+                });
+            }
             break;
         }
     }

@@ -31,12 +31,7 @@ const DayEngine = {
             const dmgValues = { 1: 5, 2: 8, 3: 12, 4: 15 };
 
             for (let i = 1; i <= daysDiff; i++) {
-                let d = new Date(lastProcessed);
-                d.setDate(d.getDate() + i);
-                let yr = d.getFullYear();
-                let mo = String(d.getMonth() + 1).padStart(2, '0');
-                let da = String(d.getDate()).padStart(2, '0');
-                let dateStr = `${yr}-${mo}-${da}`;
+                let dateStr = Utils.addDays(lastProcessed, i);
 
                 if (dateStr === today) {
                     this.ensureDailySnapshot(today);

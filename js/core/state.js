@@ -61,6 +61,11 @@ const StateManager = {
             localStorage.setItem('gamelife_save', JSON.stringify(this.data));
         } catch(e) {
             console.error("No se pudo guardar el estado", e);
+            if (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014)) {
+                if (typeof showToast === 'function') {
+                    showToast('> ALMACENAMIENTO LLENO', 'Límite de LocalStorage superado. Elimina o comprime fondos personalizados.', true);
+                }
+            }
         }
     },
 

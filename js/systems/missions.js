@@ -4,12 +4,8 @@ const COOLDOWNS = { 2: 3, 3: 7, 4: 14 };
 
 function checkCooldown(level) {
     if (!COOLDOWNS[level] || !StateManager.data.cooldowns[level]) return { allowed: true };
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const [year, month, day] = StateManager.data.cooldowns[level].split('-');
-    const lastCreated = new Date(year, month - 1, day);
-    const diffTime = today - lastCreated;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const today = Utils.getTodayISO();
+    const diffDays = Utils.diffDays(StateManager.data.cooldowns[level], today);
     
     if (diffDays < COOLDOWNS[level]) {
         return { allowed: false, remaining: COOLDOWNS[level] - diffDays };

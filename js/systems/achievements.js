@@ -69,36 +69,30 @@ const Achievements = {
     },
 
     showAchievementToast(ach) {
-        const toast = document.createElement('div');
-        toast.className = `level-toast show`;
-        toast.style.borderColor = 'var(--primary-color)';
-        toast.style.boxShadow = '0px 0px 20px var(--primary-color)';
-        toast.style.backgroundColor = 'var(--panel-bg)';
-        
         let color = '#fff';
         if (ach.tier === 'bronze') color = 'var(--tier-bronze)';
         else if (ach.tier === 'silver') color = 'var(--tier-silver)';
         else if (ach.tier === 'gold') color = 'var(--tier-gold)';
         else if (ach.tier === 'legendary') color = 'var(--tier-legendary)';
 
-        toast.innerHTML = `
-            <h2><span style="color:${color}; text-shadow: 1px 1px 0 #000;">🏆 LOGRO DESBLOQUEADO</span></h2>
-            <p style="font-size:0.5rem; color:var(--text-color); margin-top:5px;">${ach.name} - ${ach.desc}</p>
-        `;
-        document.body.appendChild(toast);
+        if (typeof ToastManager !== 'undefined') {
+            ToastManager.show(
+                `<span style="color:${color};">🏆 LOGRO DESBLOQUEADO</span>`,
+                `<b>${ach.name}</b><br><span style="color:var(--text-dim); font-size:0.85rem;">${ach.desc}</span>`,
+                'warning',
+                4800
+            );
+        }
+
         if (window.AudioSys) AudioSys.playSFX('levelup');
-        else {
+        else if (typeof playSuccessSound === 'function') {
             playSuccessSound(); 
             setTimeout(() => playSuccessSound(), 200);
         }
+
         if (window.FX) {
             FX.flash('gold');
             FX.pixelBurst(window.innerWidth / 2, 70, ['#ffd700', '#ffffff', '#ffaa00', '#00e5ff'], 25);
         }
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 500);
-        }, 4500);
     }
 };

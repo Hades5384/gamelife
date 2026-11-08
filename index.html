@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/systems.css">
     <link rel="shortcut icon" href="assets/favicon.svg" type="image/x-icon">
+    <!-- PWA & Mobile Web App Meta -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0f19">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GameLife">
 </head>
 
 <body>
@@ -179,9 +185,10 @@
 
                     <div class="cmd-section-divider mobile-hide">> RECURSOS</div>
 
-                    <button class="cmd-btn mobile-hide" onclick="scrollToShop()">
+                    <button class="cmd-btn" onclick="showPanel('shop')">
                         <img src="assets/cash.png" class="sprite-icon small" alt="Tienda">
                         <span>TIENDA</span>
+                        <span class="cmd-pointer">◀</span>
                     </button>
                     <button class="cmd-btn cmd-disabled mobile-hide" title="Próximamente en V4">
                         <img src="assets/guild.png" class="sprite-icon small" alt="Gremio">
@@ -224,9 +231,6 @@
                         <span id="sanctuary-zone-badge" style="color: var(--primary-color); font-size: 0.55rem; margin-left: 8px; opacity: 0.85;">[ EXTERIOR ]</span>
                     </span>
                     <div style="display:flex; gap:8px; align-items:center;">
-                        <button class="btn-pixel" id="btn-sanctuary-max" onclick="BaseUI.testMax()" style="padding: 4px 8px; font-size: 0.55rem; background: rgba(255, 215, 0, 0.18); border-color: var(--tier-gold, #ffd700); color: var(--tier-gold, #ffd700); cursor: pointer;" title="Maxear stats para probar evolución">
-                            ⚡ MAX STATS (TEST)
-                        </button>
                         <button class="btn-pixel" id="btn-sanctuary-upgrade" onclick="BaseUI.openUpgradeModal()" style="padding: 4px 8px; font-size: 0.55rem; background: var(--panel-sub); border-color: var(--tier-gold, #ffd700); color: var(--tier-gold, #ffd700);">
                             🔨 MEJORAR (NV. 1)
                         </button>
@@ -238,6 +242,48 @@
                 <div class="panel-scroll-body" style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
                     <div id="base-viewport" class="sanctuary-stage-box">
                         <!-- El motor de canvas RPG base.js se monta aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA: BAZAR / TIENDA DEL HÉROE -->
+            <div class="view-container tab-view" id="view-shop" style="display: none; height: 100%; flex-direction: column;">
+                <div class="panel-header-bar">
+                    <span class="panel-header-title">
+                        <img src="assets/cash.png" class="sprite-icon small" alt="Tienda" style="vertical-align: middle; margin-right: 6px;">
+                        BAZAR DEL AVENTURERO
+                    </span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <div class="shop-gold-display">
+                            <img src="assets/coin.png" class="sprite-icon small" alt="Oro">
+                            <span id="shop-gold-counter">0</span>
+                        </div>
+                        <button class="btn-pixel" onclick="openModal('custom-reward-modal')" style="padding: 4px 8px; font-size: 0.55rem; background: var(--panel-sub); border-color: var(--primary-color); color: var(--primary-color);" title="Crear recompensa de la vida real">
+                            [+] NUEVO PREMIO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SELECTOR DE CATEGORÍAS -->
+                <div class="shop-nav-tabs">
+                    <button class="shop-tab-btn active" id="shop-tab-consumables" onclick="Economy.switchTab('consumables')">
+                        🧪 BOTICA RPG
+                    </button>
+                    <button class="shop-tab-btn" id="shop-tab-leisure" onclick="Economy.switchTab('leisure')">
+                        ☕ OCIO Y VIDA REAL
+                    </button>
+                    <button class="shop-tab-btn" id="shop-tab-prestige" onclick="Economy.switchTab('prestige')">
+                        👑 PRESTIGIO
+                    </button>
+                    <button class="shop-tab-btn" id="shop-tab-history" onclick="Economy.switchTab('history')">
+                        📜 HISTORIAL
+                    </button>
+                </div>
+
+                <!-- CONTENEDOR PRINCIPAL DE ITEMS -->
+                <div class="panel-scroll-body" style="padding: 12px; flex: 1; display: flex; flex-direction: column;">
+                    <div id="shop-items-grid" class="shop-grid-container">
+                        <!-- Renderizado por Economy.renderShop() -->
                     </div>
                 </div>
             </div>
@@ -321,12 +367,6 @@
                         <text x="55" y="104" class="radar-label" text-anchor="middle">FUE</text>
                     </svg>
                 </div>
-
-                <hr class="shop-section-divider">
-
-                <!-- INVENTARIO Y TIENDA RAPIDA -->
-                <div class="shop-header-title">> INVENTARIO DE RECOMPENSAS</div>
-                <div id="shop-container" class="shop-list"></div>
 
             </div>
         </aside>
@@ -618,13 +658,60 @@
         </div>
     </div>
 
-    <!-- TOASTS DE SISTEMA -->
-    <div id="generic-toast" class="level-toast">
+    <!-- MODAL: CREAR RECOMPENSA PERSONALIZADA -->
+    <div class="modal-overlay" id="custom-reward-modal">
+        <div class="modal-content" style="max-width: 440px;">
+            <div class="modal-header-flex">
+                <div class="modal-title">
+                    <img src="assets/cash.png" class="sprite-icon small" alt="Premio" style="vertical-align: middle; margin-right: 6px;">
+                    > NUEVA_RECOMPENSA_VIDA_REAL
+                </div>
+                <button class="btn-pixel-close" onclick="closeModal('custom-reward-modal')" title="Cerrar">X</button>
+            </div>
+            <div class="edit-profile-box" style="margin-top: 10px; display: flex; flex-direction: column; gap: 12px;">
+                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.4;">
+                    Define tus propios premios del mundo real para canjear usando el oro obtenido en tus misiones.
+                </p>
+                <div class="form-group">
+                    <label style="font-family: var(--font-ui); font-size: 0.58rem; color: var(--text-color); display:block; margin-bottom:6px;">NOMBRE DEL PREMIO:</label>
+                    <input type="text" id="new-reward-name" class="pixel-input" placeholder="Ej. Comprar libro, Salida con amigos..." style="width: 100%;">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label style="font-family: var(--font-ui); font-size: 0.58rem; color: var(--text-color); display:block; margin-bottom:6px;">COSTE (ORO):</label>
+                        <input type="number" id="new-reward-cost" class="pixel-input" min="5" max="9999" value="50" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label style="font-family: var(--font-ui); font-size: 0.58rem; color: var(--text-color); display:block; margin-bottom:6px;">ICONO:</label>
+                        <select id="new-reward-icon" class="pixel-select-mini" style="width: 100%; height: 36px;">
+                            <option value="☕">☕ Café / Merienda</option>
+                            <option value="🎮">🎮 Gaming / Ocio</option>
+                            <option value="🎬">🎬 Película / Serie</option>
+                            <option value="🍕">🍕 Comida Especial</option>
+                            <option value="📚">📚 Lectura / Libro</option>
+                            <option value="🎧">🎧 Música / Audio</option>
+                            <option value="🛍️">🛍️ Regalo / Compra</option>
+                            <option value="🛌">🛌 Siesta / Relax</option>
+                            <option value="✨">✨ Premio Especial</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-pixel" onclick="Economy.saveCustomReward()" style="width: 100%; padding: 12px; margin-top: 6px;">
+                    [+] REGISTRAR EN EL BAZAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOASTS DE SISTEMA (CONTENEDOR EN CASCADA) -->
+    <div id="toast-container" class="toast-stack-container" aria-live="polite"></div>
+
+    <div id="generic-toast" class="level-toast" style="display:none !important;">
         <h2 id="toast-title">MENSAJE</h2>
         <p id="toast-message">Texto aquí</p>
     </div>
 
-    <div id="level-up-toast" class="level-toast">
+    <div id="level-up-toast" class="level-toast" style="display:none !important;">
         <h2>[ LEVEL UP ]</h2>
         <p id="level-up-message">Subiste a Nivel 2</p>
     </div>
@@ -653,13 +740,16 @@
                     baseHandler.stop();
                 }
             }
+
+            if (panelName === 'shop') {
+                if (window.Economy && window.Economy.renderShop) {
+                    window.Economy.renderShop();
+                }
+            }
         }
 
         function scrollToShop() {
-            const shopContainer = document.getElementById('shop-container');
-            if (shopContainer) {
-                shopContainer.scrollIntoView({ behavior: 'smooth' });
-            }
+            showPanel('shop');
         }
     </script>
 
@@ -685,5 +775,14 @@
     <script src="js/ui/hud.js?v=3.2.0"></script>
     <script src="js/ui/chronicle.js?v=3.2.0"></script>
     <script src="js/main-v3.js?v=3.2.0"></script>
+    <script>
+        if ('serviceWorker' in navigator && (window.location.protocol.startsWith('http') || window.location.protocol === 'https:')) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch((err) => {
+                    console.log('SW offline registration skipped:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
